@@ -4,18 +4,18 @@ ITTsRosterBot.Settings = Settings
 local defaults = {
     settings = {
         guilds = {
-            {name = "Guild Slot #1", id = 0, disabled = true, selected = false},
-            {name = "Guild Slot #2", id = 0, disabled = true, selected = false},
-            {name = "Guild Slot #3", id = 0, disabled = true, selected = false},
-            {name = "Guild Slot #4", id = 0, disabled = true, selected = false},
-            {name = "Guild Slot #5", id = 0, disabled = true, selected = false}
+            { name = "Guild Slot #1", id = 0, disabled = true, selected = false },
+            { name = "Guild Slot #2", id = 0, disabled = true, selected = false },
+            { name = "Guild Slot #3", id = 0, disabled = true, selected = false },
+            { name = "Guild Slot #4", id = 0, disabled = true, selected = false },
+            { name = "Guild Slot #5", id = 0, disabled = true, selected = false }
         },
         guildsCache = {
-            {name = "Guild Slot #1", id = 0, disabled = true, selected = false},
-            {name = "Guild Slot #2", id = 0, disabled = true, selected = false},
-            {name = "Guild Slot #3", id = 0, disabled = true, selected = false},
-            {name = "Guild Slot #4", id = 0, disabled = true, selected = false},
-            {name = "Guild Slot #5", id = 0, disabled = true, selected = false}
+            { name = "Guild Slot #1", id = 0, disabled = true, selected = false },
+            { name = "Guild Slot #2", id = 0, disabled = true, selected = false },
+            { name = "Guild Slot #3", id = 0, disabled = true, selected = false },
+            { name = "Guild Slot #4", id = 0, disabled = true, selected = false },
+            { name = "Guild Slot #5", id = 0, disabled = true, selected = false }
         },
         services = {
             sales = "MM3"
@@ -70,11 +70,11 @@ for i = 1, 5 do
         getFunc = function()
             return ITTsRosterBot.db.settings.guilds[i].selected
         end,
-        setFunc = function(value)
+        setFunc = function( value )
             ITTsRosterBot.db.settings.guilds[i].selected = value
         end,
         default = defaults.settings.guilds[i].selected,
-        reference = "ITTsRosterBotSettingsGuild" .. tostring(i)
+        reference = "ITTsRosterBotSettingsGuild" .. tostring( i )
     }
 end
 
@@ -101,7 +101,7 @@ optionsData[#optionsData + 1] = {
     getFunc = function()
         return ITTsRosterBot.db.settings.historyHighlighting
     end,
-    setFunc = function(value)
+    setFunc = function( value )
         ITTsRosterBot.db.settings.historyHighlighting = value
     end,
     default = defaults.settings.historyHighlighting
@@ -121,29 +121,33 @@ optionsData[#optionsData + 1] = {
 local _desc = true
 
 local function makeITTDescription()
-    local ITTDTitle = WINDOW_MANAGER:CreateControl("ITTsRosterBotSettingsLogoTitle", ITT_RosterBotSettingsLogo, CT_LABEL)
-    ITTDTitle:SetFont("$(BOLD_FONT)|$(KB_18)|soft-shadow-thin")
-    ITTDTitle:SetText("|Cfcba03INDEPENDENT TRADING TEAM")
-    ITTDTitle:SetDimensions(240, 31)
-    ITTDTitle:SetHorizontalAlignment(1)
-    ITTDTitle:SetAnchor(TOP, ITT_RosterBotSettingsLogo, BOTTOM, 0, 40)
+    local ITTDTitle = WINDOW_MANAGER:CreateControl( "ITTsRosterBotSettingsLogoTitle", ITT_RosterBotSettingsLogo, CT_LABEL )
+    ITTDTitle:SetFont( "$(BOLD_FONT)|$(KB_18)|soft-shadow-thin" )
+    ITTDTitle:SetText( "|Cfcba03INDEPENDENT TRADING TEAM" )
+    ITTDTitle:SetDimensions( 240, 31 )
+    ITTDTitle:SetHorizontalAlignment( 1 )
+    ITTDTitle:SetAnchor( TOP, ITT_RosterBotSettingsLogo, BOTTOM, 0, 40 )
 
-    local ITTDLabel = WINDOW_MANAGER:CreateControl("ITTsRosterBotSettingsLogoTitleServer", ITTsRosterBotSettingsLogoTitle, CT_LABEL)
-    ITTDLabel:SetFont("$(MEDIUM_FONT)|$(KB_16)|soft-shadow-thick")
-    ITTDLabel:SetText("|C646464PC EU")
-    ITTDLabel:SetDimensions(240, 21)
-    ITTDLabel:SetHorizontalAlignment(1)
-    ITTDLabel:SetAnchor(TOP, ITTsRosterBotSettingsLogoTitle, BOTTOM, 0, -5)
+    local ITTDLabel = WINDOW_MANAGER:CreateControl( "ITTsRosterBotSettingsLogoTitleServer", ITTsRosterBotSettingsLogoTitle,
+        CT_LABEL )
+    ITTDLabel:SetFont( "$(MEDIUM_FONT)|$(KB_16)|soft-shadow-thick" )
+    ITTDLabel:SetText( "|C646464PC EU" )
+    ITTDLabel:SetDimensions( 240, 21 )
+    ITTDLabel:SetHorizontalAlignment( 1 )
+    ITTDLabel:SetAnchor( TOP, ITTsRosterBotSettingsLogoTitle, BOTTOM, 0, -5 )
 
-    ITT_HideMePlsRoster:SetHidden(true)
+    ITT_HideMePlsRoster:SetHidden( true )
 end
-local function LAMControlsCreatedCallbackFunc(pPanel)
+
+local function LAMControlsCreatedCallbackFunc( pPanel )
     if pPanel ~= ITTsRosterBot.panel then
         return
     end
+
     if lamPanelCreationInitDone == true then
         return
     end
+
     --Do stuff here
 
     makeITTDescription()
@@ -183,7 +187,7 @@ local function endCredits()
         getFunc = function()
             return false
         end,
-        setFunc = function(value)
+        setFunc = function( value )
             return false
         end,
         default = false,
@@ -193,11 +197,11 @@ local function endCredits()
 end
 
 function Settings:Initialize()
-    local choices = {"None"}
-    ITTsRosterBot.panel = LAM2:RegisterAddonPanel("ITTsRosterBotOptions", panelData)
-    for k, v in pairs(ITTsRosterBot.SalesAdapter.adapters) do
+    local choices = { "None" }
+    ITTsRosterBot.panel = LAM2:RegisterAddonPanel( "ITTsRosterBotOptions", panelData )
+    for k, v in pairs( ITTsRosterBot.SalesAdapter.adapters ) do
         if ITTsRosterBot.SalesAdapter.adapters[k]:Available() then
-            table.insert(choices, ITTsRosterBot.SalesAdapter.adapters[k].settingsLabel)
+            table.insert( choices, ITTsRosterBot.SalesAdapter.adapters[k].settingsLabel )
         end
     end
 
@@ -215,9 +219,9 @@ function Settings:Initialize()
 
             return choice
         end,
-        setFunc = function(choice)
+        setFunc = function( choice )
             if choice ~= "None" then
-                for k, v in pairs(ITTsRosterBot.SalesAdapter.adapters) do
+                for k, v in pairs( ITTsRosterBot.SalesAdapter.adapters ) do
                     if ITTsRosterBot.SalesAdapter.adapters[k]:Available() then
                         if ITTsRosterBot.SalesAdapter.adapters[k].settingsLabel == choice then
                             choice = ITTsRosterBot.SalesAdapter.adapters[k].name
@@ -235,10 +239,11 @@ function Settings:Initialize()
 
             if ITTsRosterBot.db.settings.services.sales ~= "None" then
                 ITTsRosterBot_SalesTotalTitle:SetText(
-                    "|t20:20:EsoUI/Art/Guild/guild_tradingHouseAccess.dds|t SALES   |c66ffc2[ " .. ITTsRosterBot.db.settings.services.sales .. " ]"
+                    "|t20:20:EsoUI/Art/Guild/guild_tradingHouseAccess.dds|t SALES   |c66ffc2[ " ..
+                    ITTsRosterBot.db.settings.services.sales .. " ]"
                 )
             else
-                ITTsRosterBot_SalesTotalTitle:SetText("|t20:20:EsoUI/Art/Guild/guild_tradingHouseAccess.dds|t SALES")
+                ITTsRosterBot_SalesTotalTitle:SetText( "|t20:20:EsoUI/Art/Guild/guild_tradingHouseAccess.dds|t SALES" )
             end
         end
     }
@@ -249,7 +254,7 @@ function Settings:Initialize()
         getFunc = function()
             return ITTsRosterBot.db.newcomer
         end,
-        setFunc = function(number)
+        setFunc = function( number )
             ITTsRosterBot.db.newcomer = number
         end,
         width = "full",
@@ -265,7 +270,7 @@ function Settings:Initialize()
         getFunc = function()
             return ITTsRosterBot.db.oldNumber
         end,
-        setFunc = function(number)
+        setFunc = function( number )
             ITTsRosterBot.db.oldNumber = number
         end,
         width = "full",
@@ -277,6 +282,6 @@ function Settings:Initialize()
 
     endCredits()
 
-    CALLBACK_MANAGER:RegisterCallback("LAM-PanelControlsCreated", LAMControlsCreatedCallbackFunc)
-    LAM2:RegisterOptionControls("ITTsRosterBotOptions", optionsData)
+    CALLBACK_MANAGER:RegisterCallback( "LAM-PanelControlsCreated", LAMControlsCreatedCallbackFunc )
+    LAM2:RegisterOptionControls( "ITTsRosterBotOptions", optionsData )
 end

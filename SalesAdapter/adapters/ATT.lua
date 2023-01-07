@@ -21,7 +21,7 @@ function Adapter:RefreshAllGuildTotals( start, finish )
 
 	for i = 1, #data do
 		if data[i].displayName == '' and data[i].guildName ~= '' then
-			local guild = ITTsRosterBot.Utils:GetGuildDetails({ name = data[i].guildName })
+			local guild = ITTsRosterBot.Utils:GetGuildDetails( { name = data[i].guildName } )
 			sales[guild.id] = data[i].salesVolume
 		end
 	end
@@ -40,9 +40,11 @@ function Adapter:SelectColumnTimeRange( timeRangeIndex )
 
 	-- ATT does not have a total option, and caps at an optional 30 days
 	if timeRangeIndex > 10 then timeRangeIndex = 10 end
+
 	local selectedTimeRange = ArkadiusTradeTools.Modules.Sales.GuildRoster.timeSelect:GetItems()[timeRangeIndex]
 
-	ITTsRosterBot.SalesAdapter:RefreshAllGuildTotals( selectedTimeRange.NewerThanTimeStamp(), selectedTimeRange.OlderThanTimeStamp() )
+	ITTsRosterBot.SalesAdapter:RefreshAllGuildTotals( selectedTimeRange.NewerThanTimeStamp(),
+		selectedTimeRange.OlderThanTimeStamp() )
 
 	ArkadiusTradeTools.Modules.Sales.GuildRoster.timeSelect:SelectItemByIndex( timeRangeIndex )
 
@@ -50,8 +52,8 @@ end
 
 function Adapter:GetSaleInformation( guildId, displayName, start, finish )
 
-	local guild = ITTsRosterBot.Utils:GetGuildDetails({ id = guildId })
-	local purchases, sales = ArkadiusTradeTools.Modules.Sales:GetPurchasesAndSalesVolumes(guild.name, displayName, start, finish)
+	local guild = ITTsRosterBot.Utils:GetGuildDetails( { id = guildId } )
+	local purchases, sales = ArkadiusTradeTools.Modules.Sales:GetPurchasesAndSalesVolumes( guild.name, displayName, start, finish )
 
 	return {
 		sales = sales,
@@ -63,8 +65,8 @@ end
 function Adapter:HideUI()
 
 	if ZO_GuildRosterSalesDays then
-		ZO_GuildRosterSalesDays:SetAlpha(0)
-    	ZO_GuildRosterSalesDays:SetHidden(true)
+		ZO_GuildRosterSalesDays:SetAlpha( 0 )
+		ZO_GuildRosterSalesDays:SetHidden( true )
 	end
 
 end
@@ -72,8 +74,8 @@ end
 function Adapter:ShowUI()
 
 	if ZO_GuildRosterSalesDays then
-		ZO_GuildRosterSalesDays:SetAlpha(1)
-    	ZO_GuildRosterSalesDays:SetHidden(false)
+		ZO_GuildRosterSalesDays:SetAlpha( 1 )
+		ZO_GuildRosterSalesDays:SetHidden( false )
 	end
 
 end
@@ -81,4 +83,4 @@ end
 ----
 -- Register Adapter
 ----
-ITTsRosterBot.SalesAdapter:Register(Adapter)
+ITTsRosterBot.SalesAdapter:Register( Adapter )

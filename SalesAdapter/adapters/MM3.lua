@@ -13,14 +13,14 @@ function Adapter:Available()
 end
 
 local MM_TimeIndexOptions = {
-    ITTsDonationBot:parse("TIME_TODAY"),
-    ITTsDonationBot:parse("TIME_YESTERDAY"),
-    ITTsDonationBot:parse("TIME_THIS_WEEK"),
-    ITTsDonationBot:parse("TIME_LAST_WEEK"),
-    ITTsDonationBot:parse("TIME_PRIOR_WEEK"),
-    ITTsDonationBot:parse("TIME_7_DAYS"),
-    ITTsDonationBot:parse("TIME_10_DAYS"),
-    ITTsDonationBot:parse("TIME_30_DAYS")
+    ITTsDonationBot:parse( "TIME_TODAY" ),
+    ITTsDonationBot:parse( "TIME_YESTERDAY" ),
+    ITTsDonationBot:parse( "TIME_THIS_WEEK" ),
+    ITTsDonationBot:parse( "TIME_LAST_WEEK" ),
+    ITTsDonationBot:parse( "TIME_PRIOR_WEEK" ),
+    ITTsDonationBot:parse( "TIME_7_DAYS" ),
+    ITTsDonationBot:parse( "TIME_10_DAYS" ),
+    ITTsDonationBot:parse( "TIME_30_DAYS" )
 }
 
 function Adapter:Initialize()
@@ -39,15 +39,15 @@ function Adapter:GetTimeRangeOptions()
     return MM_TimeIndexOptions
 end
 
-function Adapter:RefreshAllGuildTotals(start, finish)
+function Adapter:RefreshAllGuildTotals( start, finish )
     local data = _G["LibGuildStore_Internal"].guildSales
     local sales = {}
 
-    if type(data) == "table" then
-        for k, v in pairs(data) do
-            local guild = ITTsRosterBot.Utils:GetGuildDetails({ name = k })
+    if type( data ) == "table" then
+        for k, v in pairs( data ) do
+            local guild = ITTsRosterBot.Utils:GetGuildDetails( { name = k } )
 
-            if ITTsRosterBot:IsGuildEnabled(guild.id) then
+            if ITTsRosterBot:IsGuildEnabled( guild.id ) then
                 sales[guild.id] = data[k].sales[ITTsRosterBot.db.timeFrameIndex] or 0
             end
         end
@@ -60,18 +60,18 @@ function Adapter:IsColumnCheckingEnabled()
     return MasterMerchant.systemSavedVariables.diplayGuildInfo and MasterMerchant.systemSavedVariables.diplaySalesInfo
 end
 
-function Adapter:SelectColumnTimeRange(timeRangeIndex)
+function Adapter:SelectColumnTimeRange( timeRangeIndex )
     -- ATT does not have a total option, and caps at an optional 30 days
     -- if timeRangeIndex > 10 then timeRangeIndex = 10 end
     -- local selectedTimeRange = ArkadiusTradeTools.Modules.Sales.GuildRoster.timeSelect:GetItems()[timeRangeIndex]
 
     ITTsRosterBot.SalesAdapter:RefreshAllGuildTotals()
 
-    MasterMerchant.UI_GuildTime.m_comboBox:SelectItemByIndex(timeRangeIndex)
+    MasterMerchant.UI_GuildTime.m_comboBox:SelectItemByIndex( timeRangeIndex )
 end
 
-function Adapter:GetSaleInformation(guildId, displayName, start, finish)
-    local guild = ITTsRosterBot.Utils:GetGuildDetails({ id = guildId })
+function Adapter:GetSaleInformation( guildId, displayName, start, finish )
+    local guild = ITTsRosterBot.Utils:GetGuildDetails( { id = guildId } )
     local MasterMerchant = _G["LibGuildStore_Internal"]
     local sales = 0
     local purchases = 0
@@ -103,19 +103,19 @@ end
 
 function Adapter:HideUI()
     if MasterMerchant.UI_GuildTime then
-        MasterMerchant.UI_GuildTime:SetAlpha(0)
-        MasterMerchant.UI_GuildTime:SetHidden(true)
+        MasterMerchant.UI_GuildTime:SetAlpha( 0 )
+        MasterMerchant.UI_GuildTime:SetHidden( true )
     end
 end
 
 function Adapter:ShowUI()
     if MasterMerchant.UI_GuildTime then
-        MasterMerchant.UI_GuildTime:SetAlpha(1)
-        MasterMerchant.UI_GuildTime:SetHidden(false)
+        MasterMerchant.UI_GuildTime:SetAlpha( 1 )
+        MasterMerchant.UI_GuildTime:SetHidden( false )
     end
 end
 
 ----
 -- Register Adapter
 ----
-ITTsRosterBot.SalesAdapter:Register(Adapter)
+ITTsRosterBot.SalesAdapter:Register( Adapter )

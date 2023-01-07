@@ -4,12 +4,12 @@ ITTsRosterBot.name = "ITTsRosterBot"
 local db = {}
 ITTsRosterBot.db = db
 
-local logger = LibDebugLogger(ITTsRosterBot.name)
+local logger = LibDebugLogger( ITTsRosterBot.name )
 -- local LH = LibHistoire
 
-logger:SetEnabled(false)
+logger:SetEnabled( false )
 
-local chat = LibChatMessage("ITTsRosterBot", "ITTs-RB")
+local chat = LibChatMessage( "ITTsRosterBot", "ITTs-RB" )
 
 local SECONDS_IN_HOUR = 60 * 60
 local SECONDS_IN_DAY = SECONDS_IN_HOUR * 24
@@ -18,18 +18,18 @@ local SECONDS_IN_WEEK = SECONDS_IN_DAY * 7
 local defaults = {
     settings = {
         guilds = {
-            {name = "Guild Slot #1", id = 0, disabled = true, selected = false},
-            {name = "Guild Slot #2", id = 0, disabled = true, selected = false},
-            {name = "Guild Slot #3", id = 0, disabled = true, selected = false},
-            {name = "Guild Slot #4", id = 0, disabled = true, selected = false},
-            {name = "Guild Slot #5", id = 0, disabled = true, selected = false}
+            { name = "Guild Slot #1", id = 0, disabled = true, selected = false },
+            { name = "Guild Slot #2", id = 0, disabled = true, selected = false },
+            { name = "Guild Slot #3", id = 0, disabled = true, selected = false },
+            { name = "Guild Slot #4", id = 0, disabled = true, selected = false },
+            { name = "Guild Slot #5", id = 0, disabled = true, selected = false }
         },
         guildsCache = {
-            {name = "Guild Slot #1", id = 0, disabled = true, selected = false},
-            {name = "Guild Slot #2", id = 0, disabled = true, selected = false},
-            {name = "Guild Slot #3", id = 0, disabled = true, selected = false},
-            {name = "Guild Slot #4", id = 0, disabled = true, selected = false},
-            {name = "Guild Slot #5", id = 0, disabled = true, selected = false}
+            { name = "Guild Slot #1", id = 0, disabled = true, selected = false },
+            { name = "Guild Slot #2", id = 0, disabled = true, selected = false },
+            { name = "Guild Slot #3", id = 0, disabled = true, selected = false },
+            { name = "Guild Slot #4", id = 0, disabled = true, selected = false },
+            { name = "Guild Slot #5", id = 0, disabled = true, selected = false }
         },
         services = {
             sales = "MM3"
@@ -53,70 +53,72 @@ local worldName = GetWorldName()
 -- Application Append
 -- --------------------
 
-function ZO_GuildRecruitment_ApplicationsList_Row_OnMouseEnter(control)
-    GUILD_RECRUITMENT_APPLICATIONS_KEYBOARD:GetSubcategoryManager(ZO_GUILD_RECRUITMENT_APPLICATIONS_SUBCATEGORY_KEYBOARD_RECEIVED):Row_OnMouseEnter(
-        control
-    )
+function ZO_GuildRecruitment_ApplicationsList_Row_OnMouseEnter( control )
+    GUILD_RECRUITMENT_APPLICATIONS_KEYBOARD:GetSubcategoryManager( ZO_GUILD_RECRUITMENT_APPLICATIONS_SUBCATEGORY_KEYBOARD_RECEIVED )
+        :Row_OnMouseEnter(
+            control
+        )
     -- d('Over ride')
     -- local data = ZO_ScrollList_GetData(control)
     -- self.currentData = data
-    local displayName = control:GetNamedChild("Name"):GetText()
+    local displayName = control:GetNamedChild( "Name" ):GetText()
 
     local originalMessage = GUILD_FINDER_MANAGER.applicationKeyboardTooltipInfo.messageControl:GetText()
 
     local text = ""
 
     -- local relatedGuilds = ITTsRosterBot:BuildRelatedGuilds( displayName, GetGuildName(GUILD_ROSTER_MANAGER.guildId) )
-    local relatedGuilds = ITTsRosterBot.Utils:BuildInlineRelatedGuilds(displayName, GUILD_ROSTER_MANAGER.guildId)
+    local relatedGuilds = ITTsRosterBot.Utils:BuildInlineRelatedGuilds( displayName, GUILD_ROSTER_MANAGER.guildId )
 
     if relatedGuilds ~= "" then
         text = "\n\n" .. text .. "|C4bc8ebRelated Guilds:|C999999 " .. relatedGuilds .. "\n"
     end
 
-    GUILD_FINDER_MANAGER.applicationKeyboardTooltipInfo.messageControl:SetText(originalMessage .. text)
+    GUILD_FINDER_MANAGER.applicationKeyboardTooltipInfo.messageControl:SetText( originalMessage .. text )
 end
 
 -- --------------------
 -- Event Callbacks
 -- --------------------
-local function OnPlayerActivated(eventCode)
-    EVENT_MANAGER:UnregisterForEvent(ITTsRosterBot.name, eventCode)
+local function OnPlayerActivated( eventCode )
+    EVENT_MANAGER:UnregisterForEvent( ITTsRosterBot.name, eventCode )
 
     ITTsRosterBot:Initialize()
 end
 
-local function OnHistoryResponseReceived(ev, guildId, category)
-    if category == GUILD_HISTORY_GENERAL and ITTsRosterBot:IsGuildEnabled(guildId) then
-        ITTsRosterBot:RunScanCycle(guildId)
+local function OnHistoryResponseReceived( ev, guildId, category )
+    if category == GUILD_HISTORY_GENERAL and ITTsRosterBot:IsGuildEnabled( guildId ) then
+        ITTsRosterBot:RunScanCycle( guildId )
     end
 
     -- logger:Info('---------------------------------')
 end
 
-local function ITTsRosterBot_OnAddOnLoaded(eventCode, addOnName)
+local function ITTsRosterBot_OnAddOnLoaded( eventCode, addOnName )
     if addOnName == ITTsRosterBot.name then
-        logger:Info("ITTsRosterBot_OnAddOnLoaded")
+        logger:Info( "ITTsRosterBot_OnAddOnLoaded" )
 
-        db = ZO_SavedVars:NewAccountWide("ITTsRosterBotSettings", 2, nil, defaults)
+        db = ZO_SavedVars:NewAccountWide( "ITTsRosterBotSettings", 2, nil, defaults )
         ITTsRosterBot.db = db
-        EVENT_MANAGER:RegisterForEvent(ITTsRosterBot.name, EVENT_PLAYER_ACTIVATED, OnPlayerActivated)
-        EVENT_MANAGER:UnregisterForEvent(ITTsRosterBot.name, eventCode)
+        EVENT_MANAGER:RegisterForEvent( ITTsRosterBot.name, EVENT_PLAYER_ACTIVATED, OnPlayerActivated )
+        EVENT_MANAGER:UnregisterForEvent( ITTsRosterBot.name, eventCode )
     end
 end
+
 -- --------------------
 -- Methods
 -- --------------------
 function ITTsRosterBot:Initialize()
-    logger:Info("ITTsRosterBot:Initialize()", self.name)
+    logger:Info( "ITTsRosterBot:Initialize()", self.name )
 
-    EVENT_MANAGER:RegisterForEvent(ITTsRosterBot.name, EVENT_GUILD_HISTORY_RESPONSE_RECEIVED, OnHistoryResponseReceived)
+    EVENT_MANAGER:RegisterForEvent( ITTsRosterBot.name, EVENT_GUILD_HISTORY_RESPONSE_RECEIVED, OnHistoryResponseReceived )
 
     EVENT_MANAGER:RegisterForEvent(
         ITTsRosterBot.name,
         EVENT_GUILD_SELF_JOINED_GUILD,
-        function(_, _, newGuildId)
-            logger:Info("EVENT_GUILD_SELF_JOINED_GUILD")
-            ITTsRosterBot:CheckGuildPermissions(newGuildId)
+        function( _, _, newGuildId )
+            logger:Info( "EVENT_GUILD_SELF_JOINED_GUILD" )
+            ITTsRosterBot:CheckGuildPermissions( newGuildId )
         end
     )
 
@@ -124,7 +126,7 @@ function ITTsRosterBot:Initialize()
         ITTsRosterBot.name,
         EVENT_GUILD_SELF_LEFT_GUILD,
         function()
-            logger:Info("EVENT_GUILD_SELF_LEFT_GUILD")
+            logger:Info( "EVENT_GUILD_SELF_LEFT_GUILD" )
             ITTsRosterBot:CheckGuildPermissions()
         end
     )
@@ -142,45 +144,47 @@ function ITTsRosterBot:Initialize()
 
     -- self:CreateStatusBox()
 
-    GUILD_ROSTER_KEYBOARD.DisplayName_OnMouseEnter = function(self, control)
+    GUILD_ROSTER_KEYBOARD.DisplayName_OnMouseEnter = function( self, control )
         local row = control:GetParent()
-        local data = ZO_ScrollList_GetData(row)
+        local data = ZO_ScrollList_GetData( row )
         local timeString = nil
         local joinString = nil
         local importString = nil
         local text = ""
         local color = "FFFFFF"
 
-        if
-            ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records and
-                ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[data.displayName] and
-                ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[data.displayName].first
-         then
-            local joinedFirst = ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[data.displayName].first
-            local formatedTime = os.date("*t", joinedFirst)
+        if ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records and
+            ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[data.displayName] and
+            ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[data.displayName].first
+        then
+            local joinedFirst = ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[
+                data.displayName].first
+            local formatedTime = os.date( "*t", joinedFirst )
             local hour = formatedTime.hour
             local min = formatedTime.min
 
             if hour < 10 then
-                hour = "0" .. tostring(hour)
+                hour = "0" .. tostring( hour )
             end
+
             if min < 10 then
-                min = "0" .. tostring(min)
+                min = "0" .. tostring( min )
             end
 
             timeString =
-                "|cF49B22Joined first: |C" ..
+            "|cF49B22Joined first: |C" ..
                 color ..
-                    ZO_FormatDurationAgo((GetTimeStamp() - joinedFirst)) ..
-                        " |c858585( " .. formatedTime.day .. "/" .. formatedTime.month .. "/" .. formatedTime.year .. " )" .. "\n"
+                ZO_FormatDurationAgo( (GetTimeStamp() - joinedFirst) ) ..
+                " |c858585( " .. formatedTime.day .. "/" .. formatedTime.month .. "/" .. formatedTime.year .. " )" .. "\n"
         end
-        if
-            ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records and
-                ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[data.displayName] and
-                ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[data.displayName].last
-         then
-            local joinedLast = ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[data.displayName].last
-            local formatedTime = os.date("*t", joinedLast)
+
+        if ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records and
+            ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[data.displayName] and
+            ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[data.displayName].last
+        then
+            local joinedLast = ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[
+                data.displayName].last
+            local formatedTime = os.date( "*t", joinedLast )
             local hour = formatedTime.hour
             local min = formatedTime.min
             local newcomer = ITTsRosterBot.db.newcomer * 86400 -- seconds in day
@@ -188,64 +192,73 @@ function ITTsRosterBot:Initialize()
             if GetTimeStamp() - joinedLast < newcomer then
                 color = "FA5858"
             end
+
             if GetTimeStamp() - joinedLast > oldNumber then
                 color = "A9F5A9"
             end
+
             if hour < 10 then
-                hour = "0" .. tostring(hour)
+                hour = "0" .. tostring( hour )
             end
+
             if min < 10 then
-                min = "0" .. tostring(min)
+                min = "0" .. tostring( min )
             end
 
             joinString =
-                "|c00FFBFLatest join: |C" ..
+            "|c00FFBFLatest join: |C" ..
                 color ..
-                    ZO_FormatDurationAgo((GetTimeStamp() - joinedLast)) ..
-                        " |c858585( " .. formatedTime.day .. "/" .. formatedTime.month .. "/" .. formatedTime.year .. " )" .. "\n"
+                ZO_FormatDurationAgo( (GetTimeStamp() - joinedLast) ) ..
+                " |c858585( " .. formatedTime.day .. "/" .. formatedTime.month .. "/" .. formatedTime.year .. " )" .. "\n"
         end
 
-        if
-            ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records and
-                ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[data.displayName] and
-                ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[data.displayName].import
-         then
+        if ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records and
+            ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[data.displayName] and
+            ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[data.displayName].import
+        then
             local import = ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[data.displayName].import
-            local formatedTime = os.date("*t", import)
+            local formatedTime = os.date( "*t", import )
             local hour = formatedTime.hour
             local min = formatedTime.min
 
             if hour < 10 then
-                hour = "0" .. tostring(hour)
+                hour = "0" .. tostring( hour )
             end
+
             if min < 10 then
-                min = "0" .. tostring(min)
+                min = "0" .. tostring( min )
             end
 
             importString =
-                "|c00FFB2Imported: |CFFFFFF" ..
-                ZO_FormatDurationAgo((GetTimeStamp() - import)) ..
-                    " |c858585( " .. formatedTime.day .. "/" .. formatedTime.month .. "/" .. formatedTime.year .. " )" .. "\n"
+            "|c00FFB2Imported: |CFFFFFF" ..
+                ZO_FormatDurationAgo( (GetTimeStamp() - import) ) ..
+                " |c858585( " .. formatedTime.day .. "/" .. formatedTime.month .. "/" .. formatedTime.year .. " )" .. "\n"
         end
 
         if timeString ~= nil then
             text = timeString
         end
+
         if joinString ~= nil then
             text = joinString
         end
+
         if importString ~= nil then
             text = importString
         end
+
         if timeString ~= nil and joinString ~= nil then
             text = timeString .. joinString
         end
+
         if importString ~= nil and joinString ~= nil then
             text = importString .. joinString
         end
+
         if timeString ~= nil and importString ~= nil then
             text = timeString .. importString
         end
+
         if timeString ~= nil and joinString ~= nil and importString ~= nil then
             if timeString == joinString then
                 return
@@ -257,74 +270,76 @@ function ITTsRosterBot:Initialize()
                 text = timeString .. joinString .. importString
             end
         end
-        local relatedGuilds = ITTsRosterBot.Utils:BuildInlineRelatedGuilds(data.displayName, GUILD_ROSTER_MANAGER.guildId)
+
+        local relatedGuilds = ITTsRosterBot.Utils:BuildInlineRelatedGuilds( data.displayName, GUILD_ROSTER_MANAGER.guildId )
 
         if data.displayName ~= GetDisplayName() and relatedGuilds ~= "" then
             text = text .. "|C4bc8ebRelated Guilds:|C999999 " .. relatedGuilds .. "\n"
         end
 
-        text = text .. "|C0095bfCharacter: |C999999" .. ZO_FormatUserFacingCharacterName(data.characterName)
+        text = text .. "|C0095bfCharacter: |C999999" .. ZO_FormatUserFacingCharacterName( data.characterName )
 
         if (text ~= "") then
-            InitializeTooltip(InformationTooltip)
-            SetTooltipText(InformationTooltip, text)
+            InitializeTooltip( InformationTooltip )
+            SetTooltipText( InformationTooltip, text )
             InformationTooltip:ClearAnchors()
-            InformationTooltip:SetAnchor(BOTTOM, control, TOPLEFT, control:GetTextDimensions() * 0.5, 0)
+            InformationTooltip:SetAnchor( BOTTOM, control, TOPLEFT, control:GetTextDimensions() * 0.5, 0 )
         end
 
-        self:EnterRow(row)
+        self:EnterRow( row )
     end
 end
 
 function ITTsRosterBot:CacheMembers()
     for i = 1, GetNumGuilds() do
-        local guildId = GetGuildId(i)
-        local gname = GetGuildName(guildId)
-        local total = GetNumGuildMembers(guildId)
+        local guildId = GetGuildId( i )
+        local gname = GetGuildName( guildId )
+        local total = GetNumGuildMembers( guildId )
 
         if gname ~= "" then
             for l = 1, total do
-                local displayName, _, _, _, _ = GetGuildMemberInfo(guildId, l)
+                local displayName, _, _, _, _ = GetGuildMemberInfo( guildId, l )
                 if self.memberCache[displayName] == nil then
                     self.memberCache[displayName] = {}
                 end
 
-                table.insert(self.memberCache[displayName], gname)
+                table.insert( self.memberCache[displayName], gname )
             end
         end
     end
 end
 
 function ITTsRosterBot:CreateStatusBox()
-    local statusBox = WINDOW_MANAGER:CreateControl("ITT_StatusBox", ZO_ChatWindow, CT_LABEL)
-    statusBox:SetFont("$(MEDIUM_FONT)|$(KB_16)|soft-shadow-thin")
+    local statusBox = WINDOW_MANAGER:CreateControl( "ITT_StatusBox", ZO_ChatWindow, CT_LABEL )
+    statusBox:SetFont( "$(MEDIUM_FONT)|$(KB_16)|soft-shadow-thin" )
     statusBox:SetText(
         "|t42:42:esoui/art/tutorial/guild-tabicon_roster_up.dds|t   |C277fa8Writing guild notes ( |C38cff548|C277fa8 / 118 )      ~ 27 mins                     |t18:18:esoui/art/buttons/decline_up.dds|t"
     )
-    statusBox:SetDimensions(ZO_ChatWindow:GetWidth(), 48)
-    statusBox:SetHorizontalAlignment(0)
-    statusBox:SetVerticalAlignment(1)
-    statusBox:SetAnchor(BOTTOM, ZO_ChatWindow, TOP, 0, -50)
+    statusBox:SetDimensions( ZO_ChatWindow:GetWidth(), 48 )
+    statusBox:SetHorizontalAlignment( 0 )
+    statusBox:SetVerticalAlignment( 1 )
+    statusBox:SetAnchor( BOTTOM, ZO_ChatWindow, TOP, 0, -50 )
 
-    local statusBoxBG = WINDOW_MANAGER:CreateControl("ITT_StatusBoxBG", statusBox, CT_BACKDROP)
-    statusBoxBG:SetDimensions(statusBox:GetWidth(), statusBox:GetHeight())
-    statusBoxBG:SetAnchor(CENTER, statusBox, CENTER, 0, 0)
-    statusBoxBG:SetAlpha(0.7)
-    statusBoxBG:SetCenterColor(ZO_ColorDef:New(0, 0, 0, 1):UnpackRGBA())
-    statusBoxBG:SetEdgeColor(ZO_ColorDef:New(0, 0, 0, 0):UnpackRGBA())
+    local statusBoxBG = WINDOW_MANAGER:CreateControl( "ITT_StatusBoxBG", statusBox, CT_BACKDROP )
+    statusBoxBG:SetDimensions( statusBox:GetWidth(), statusBox:GetHeight() )
+    statusBoxBG:SetAnchor( CENTER, statusBox, CENTER, 0, 0 )
+    statusBoxBG:SetAlpha( 0.7 )
+    statusBoxBG:SetCenterColor( ZO_ColorDef:New( 0, 0, 0, 1 ):UnpackRGBA() )
+    statusBoxBG:SetEdgeColor( ZO_ColorDef:New( 0, 0, 0, 0 ):UnpackRGBA() )
 end
 
-function ITTsRosterBot:BuildRelatedGuilds(displayName, currentGuild)
+function ITTsRosterBot:BuildRelatedGuilds( displayName, currentGuild )
     local guilds = self.memberCache[displayName]
     local gtext = ""
 
     if guilds ~= nil then
-        for k, v in pairs(guilds) do
+        for k, v in pairs( guilds ) do
             if currentGuild ~= nil and v == currentGuild then
             else
                 if gtext ~= "" then
                     gtext = gtext .. ", "
                 end
+
                 gtext = gtext .. v
             end
         end
@@ -337,27 +352,27 @@ function ITTsRosterBot:BuildRelatedGuilds(displayName, currentGuild)
     return gtext
 end
 
-function ITTsRosterBot:CheckGuildPermissions(newGuildId)
-    logger:Info("ITTsRosterBot:CheckGuildPermissions()")
+function ITTsRosterBot:CheckGuildPermissions( newGuildId )
+    logger:Info( "ITTsRosterBot:CheckGuildPermissions()" )
 
     for i = 1, 5 do
-        local guildId = GetGuildId(i)
+        local guildId = GetGuildId( i )
 
-        logger:Info("-----")
-        logger:Info("Guild #" .. tostring(i) .. " ", GetGuildName(guildId), guildId)
-        local control = _G["ITTsRosterBotSettingsGuild" .. tostring(i)]
+        logger:Info( "-----" )
+        logger:Info( "Guild #" .. tostring( i ) .. " ", GetGuildName( guildId ), guildId )
+        local control = _G["ITTsRosterBotSettingsGuild" .. tostring( i )]
 
         if guildId > 0 then
             -- end
-            local guildName = GetGuildName(guildId)
+            local guildName = GetGuildName( guildId )
             local cachedSetting = ITTsRosterBot.db.settings.guilds[i].selected
 
             if guildId ~= ITTsRosterBot.db.settings.guildsCache[i].id then
-                logger:Info("#" .. tostring(i) .. " is a mis-match")
+                logger:Info( "#" .. tostring( i ) .. " is a mis-match" )
 
                 for inc = 1, 5 do
                     logger:Info(
-                        "CACHE CHECK for slot #" .. tostring(i) .. " - [" .. tostring(inc) .. "]",
+                        "CACHE CHECK for slot #" .. tostring( i ) .. " - [" .. tostring( inc ) .. "]",
                         ITTsRosterBot.db.settings.guildsCache[inc].id,
                         guildId,
                         ITTsRosterBot.db.settings.guildsCache[inc].id == guildId
@@ -365,7 +380,7 @@ function ITTsRosterBot:CheckGuildPermissions(newGuildId)
 
                     if ITTsRosterBot.db.settings.guildsCache[inc].id == guildId then
                         cachedSetting = ITTsRosterBot.db.settings.guildsCache[inc].selected
-                        logger:Info("The previous value was", cachedSetting)
+                        logger:Info( "The previous value was", cachedSetting )
                     end
                 end
             end
@@ -376,7 +391,7 @@ function ITTsRosterBot:CheckGuildPermissions(newGuildId)
             if newGuildId and ITTsRosterBot.db.settings.guilds[i].id == newGuildId then
                 ITTsRosterBot.db.settings.guilds[i].selected = true
                 ITTsRosterBot.db.settings.guilds[i].disabled = false
-            elseif "Guild Slot #" .. tostring(i) == ITTsRosterBot.db.settings.guildsCache[i].name then
+            elseif "Guild Slot #" .. tostring( i ) == ITTsRosterBot.db.settings.guildsCache[i].name then
                 ITTsRosterBot.db.settings.guilds[i].selected = true
                 ITTsRosterBot.db.settings.guilds[i].disabled = false
             end
@@ -386,25 +401,26 @@ function ITTsRosterBot:CheckGuildPermissions(newGuildId)
             -- ITTsRosterBot.db.settings.guilds[i].selected = false
             ITTsRosterBot.db.settings.guilds[i].disabled = false
         else
-            ITTsRosterBot.db.settings.guilds[i].name = "Guild Slot #" .. tostring(i)
+            ITTsRosterBot.db.settings.guilds[i].name = "Guild Slot #" .. tostring( i )
             ITTsRosterBot.db.settings.guilds[i].id = 0
             ITTsRosterBot.db.settings.guilds[i].disabled = true
             ITTsRosterBot.db.settings.guilds[i].selected = false
         end
 
         if control then
-            control.label:SetText(ITTsRosterBot.db.settings.guilds[i].name)
+            control.label:SetText( ITTsRosterBot.db.settings.guilds[i].name )
             control:UpdateValue()
-        -- control.UpdateDisabled()
+            -- control.UpdateDisabled()
         end
     end
 
-    ZO_DeepTableCopy(ITTsRosterBot.db.settings.guilds, ITTsRosterBot.db.settings.guildsCache)
+    ZO_DeepTableCopy( ITTsRosterBot.db.settings.guilds, ITTsRosterBot.db.settings.guildsCache )
 end
 
-function ITTsRosterBot:SaveEvent(guildId, eventIndex)
+function ITTsRosterBot:SaveEvent( guildId, eventIndex )
     local timeStamp = GetTimeStamp()
-    local eventType, secsSinceEvent, displayName, amount, arg1, _, _, _, id = GetGuildEventInfo(guildId, GUILD_HISTORY_GENERAL, eventIndex)
+    local eventType, secsSinceEvent, displayName, amount, arg1, _, _, _, id = GetGuildEventInfo( guildId,
+        GUILD_HISTORY_GENERAL, eventIndex )
 
     -- logger:Info(eventIndex, eventType)
 
@@ -413,9 +429,10 @@ function ITTsRosterBot:SaveEvent(guildId, eventIndex)
         if eventTimestamp < 0 then
             eventTimestamp = timeStamp
         end
-        local eventId = GetGuildEventId(guildId, category, eventIndex)
 
-        logger:Info("ITTsRosterBot:SaveEvent()", "#" .. tostring(eventIndex), displayName, eventTimestamp, id)
+        local eventId = GetGuildEventId( guildId, category, eventIndex )
+
+        logger:Info( "ITTsRosterBot:SaveEvent()", "#" .. tostring( eventIndex ), displayName, eventTimestamp, id )
 
         if not ITTsRosterBotData[worldName].guilds[guildId].join_records[displayName] then
             ITTsRosterBotData[worldName].guilds[guildId].join_records[displayName] = {}
@@ -432,20 +449,20 @@ function ITTsRosterBot:SaveEvent(guildId, eventIndex)
     end
 end
 
-function ITTsRosterBot:RunScanCycle(guildId, forceIndex)
+function ITTsRosterBot:RunScanCycle( guildId, forceIndex )
     self.scanHistory = self.scanHistory or {}
     local start = self.scanHistory[guildId] or 1
-    local numGuildEvents = GetNumGuildEvents(guildId, GUILD_HISTORY_GENERAL_ROSTER)
+    local numGuildEvents = GetNumGuildEvents( guildId, GUILD_HISTORY_GENERAL_ROSTER )
 
     if forceIndex then
         start = 1
     end
 
-    logger:Info("start:", start)
-    logger:Info("scanHistory:", self.scanHistory[guildId])
+    logger:Info( "start:", start )
+    logger:Info( "scanHistory:", self.scanHistory[guildId] )
 
     for index = start, numGuildEvents do
-        self:SaveEvent(guildId, index)
+        self:SaveEvent( guildId, index )
     end
 
     self.scanHistory[guildId] = numGuildEvents + 1
@@ -455,22 +472,26 @@ function ITTsRosterBot:GetGuildMap()
     local guilds = {}
 
     for i = 1, GetNumGuilds() do
-        local guildId = GetGuildId(i)
+        local guildId = GetGuildId( i )
         if ITTsRosterBot.db.settings.guilds[i].selected and not ITTsRosterBot.db.settings.guilds[i].disabled then
             guilds[#guilds + 1] = ITTsRosterBot.db.settings.guilds[i].id
 
             if not ITTsRosterBotData then
                 ITTsRosterBotData = {}
             end
+
             if not ITTsRosterBotData[worldName] then
                 ITTsRosterBotData[worldName] = {}
             end
+
             if not ITTsRosterBotData[worldName].guilds then
                 ITTsRosterBotData[worldName].guilds = {}
             end
+
             if not ITTsRosterBotData[worldName].guilds[guildId] then
                 ITTsRosterBotData[worldName].guilds[guildId] = {}
             end
+
             if not ITTsRosterBotData[worldName].guilds[guildId].join_records then
                 ITTsRosterBotData[worldName].guilds[guildId].join_records = {}
             end
@@ -479,7 +500,7 @@ function ITTsRosterBot:GetGuildMap()
     return guilds
 end
 
-function ITTsRosterBot:IsGuildEnabled(guildId)
+function ITTsRosterBot:IsGuildEnabled( guildId )
     local list = self:GetGuildMap()
     local condition = false
 
@@ -494,70 +515,70 @@ function ITTsRosterBot:IsGuildEnabled(guildId)
 end
 
 function ITTsRosterBot:RequestAllHistory()
-    for _, guildId in pairs(self:GetGuildMap()) do
-        self:RequestHistory(guildId, GUILD_HISTORY_GENERAL)
+    for _, guildId in pairs( self:GetGuildMap() ) do
+        self:RequestHistory( guildId, GUILD_HISTORY_GENERAL )
     end
 end
 
-function ITTsRosterBot:RequestHistory(gID, guildHistoryCategory)
+function ITTsRosterBot:RequestHistory( gID, guildHistoryCategory )
     local cooldown = 1000 * 60
 
-    logger:Info("ITTsRosterBot:RequestHistory() running -", GetGuildName(gID) .. "-" .. guildHistoryCategory)
+    logger:Info( "ITTsRosterBot:RequestHistory() running -", GetGuildName( gID ) .. "-" .. guildHistoryCategory )
 
-    if
-        DoesGuildHistoryCategoryHaveOutstandingRequest(gID, guildHistoryCategory) == false and
-            IsGuildHistoryCategoryRequestQueued(gID, guildHistoryCategory) == false
-     then
-        if DoesGuildHistoryCategoryHaveMoreEvents(gID, guildHistoryCategory) then
-            logger:Info("More history exists for ", GetGuildName(gID) .. "-" .. guildHistoryCategory)
+    if DoesGuildHistoryCategoryHaveOutstandingRequest( gID, guildHistoryCategory ) == false and
+        IsGuildHistoryCategoryRequestQueued( gID, guildHistoryCategory ) == false
+    then
+        if DoesGuildHistoryCategoryHaveMoreEvents( gID, guildHistoryCategory ) then
+            logger:Info( "More history exists for ", GetGuildName( gID ) .. "-" .. guildHistoryCategory )
 
-            if RequestMoreGuildHistoryCategoryEvents(gID, guildHistoryCategory) then
-                logger:Info("Requesting Guild History:", GetGuildName(gID) .. "-" .. guildHistoryCategory)
+            if RequestMoreGuildHistoryCategoryEvents( gID, guildHistoryCategory ) then
+                logger:Info( "Requesting Guild History:", GetGuildName( gID ) .. "-" .. guildHistoryCategory )
                 zo_callLater(
                     function()
-                        ITTsRosterBot:RequestHistory(gID, guildHistoryCategory)
+                        ITTsRosterBot:RequestHistory( gID, guildHistoryCategory )
                     end,
                     cooldown
                 )
             else
                 logger:Info(
                     "Request cooldown for ",
-                    GetGuildName(gID) .. "-" .. guildHistoryCategory,
+                    GetGuildName( gID ) .. "-" .. guildHistoryCategory,
                     " has not expired yet, re-calling in a few minutes"
                 )
                 zo_callLater(
                     function()
-                        ITTsRosterBot:RequestHistory(gID, guildHistoryCategory)
+                        ITTsRosterBot:RequestHistory( gID, guildHistoryCategory )
                     end,
                     cooldown
                 )
             end
         else
-            logger:Info("No more history exists for ", GetGuildName(gID) .. "-" .. guildHistoryCategory)
-            logger:Info("Total:", GetNumGuildEvents(gID, guildHistoryCategory))
+            logger:Info( "No more history exists for ", GetGuildName( gID ) .. "-" .. guildHistoryCategory )
+            logger:Info( "Total:", GetNumGuildEvents( gID, guildHistoryCategory ) )
 
-            if GetNumGuildEvents(gID, guildHistoryCategory) > 0 and ITTsRosterBotData[worldName].guilds[gID].join_records == nil then -- ITTsRosterBotData[worldName].guilds[guildId].join_records
-                self:RunScanCycle(gID, 1)
+            if GetNumGuildEvents( gID, guildHistoryCategory ) > 0 and
+                ITTsRosterBotData[worldName].guilds[gID].join_records == nil then -- ITTsRosterBotData[worldName].guilds[guildId].join_records
+                self:RunScanCycle( gID, 1 )
             end
         end
     else
-        logger:Info("Scan requirements not met: Trying again in 1m")
+        logger:Info( "Scan requirements not met: Trying again in 1m" )
         zo_callLater(
             function()
-                ITTsRosterBot:RequestHistory(gID, guildHistoryCategory)
+                ITTsRosterBot:RequestHistory( gID, guildHistoryCategory )
             end,
             cooldown
         )
     end
 end
 
-function ITTsRosterBot:GetTimestampOfDayStart(offset)
-    local timeObject = os.date("*t", os.time() - (24 * offset) * 60 * 60)
+function ITTsRosterBot:GetTimestampOfDayStart( offset )
+    local timeObject = os.date( "*t", os.time() - (24 * offset) * 60 * 60 )
     local hours = timeObject.hour
     local mins = timeObject.min
     local secs = timeObject.sec
     local UTCMidnightOffset = (hours * SECONDS_IN_HOUR) + (mins * 60) + secs
-    local recordTimestamp = os.time(timeObject)
+    local recordTimestamp = os.time( timeObject )
 
     return recordTimestamp - UTCMidnightOffset
 end
@@ -577,4 +598,4 @@ end
 -- --------------------
 -- Attach Listeners
 -- --------------------
-EVENT_MANAGER:RegisterForEvent(ITTsRosterBot.name, EVENT_ADD_ON_LOADED, ITTsRosterBot_OnAddOnLoaded)
+EVENT_MANAGER:RegisterForEvent( ITTsRosterBot.name, EVENT_ADD_ON_LOADED, ITTsRosterBot_OnAddOnLoaded )
