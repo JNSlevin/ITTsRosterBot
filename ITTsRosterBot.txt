@@ -10,6 +10,7 @@
 ITTsRosterBot.lua
 ITTsRosterBot-Settings.lua
 ITTsRosterBotUtils.lua
+ITTsRosterBotChat.lua
 
 SalesAdapter/SalesAdapter.lua
 SalesAdapter/adapters/ATT.lua

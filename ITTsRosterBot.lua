@@ -54,10 +54,8 @@ local worldName = GetWorldName()
 -- --------------------
 
 function ZO_GuildRecruitment_ApplicationsList_Row_OnMouseEnter( control )
-    GUILD_RECRUITMENT_APPLICATIONS_KEYBOARD:GetSubcategoryManager( ZO_GUILD_RECRUITMENT_APPLICATIONS_SUBCATEGORY_KEYBOARD_RECEIVED )
-        :Row_OnMouseEnter(
-            control
-        )
+    GUILD_RECRUITMENT_APPLICATIONS_KEYBOARD:GetSubcategoryManager(
+        ZO_GUILD_RECRUITMENT_APPLICATIONS_SUBCATEGORY_KEYBOARD_RECEIVED ):Row_OnMouseEnter( control )
     -- d('Over ride')
     -- local data = ZO_ScrollList_GetData(control)
     -- self.currentData = data
@@ -100,7 +98,8 @@ local function ITTsRosterBot_OnAddOnLoaded( eventCode, addOnName )
 
         db = ZO_SavedVars:NewAccountWide( "ITTsRosterBotSettings", 2, nil, defaults )
         ITTsRosterBot.db = db
-        EVENT_MANAGER:RegisterForEvent( ITTsRosterBot.name, EVENT_PLAYER_ACTIVATED, OnPlayerActivated )
+
+        MyChatHandlersMessageChannelFormatter()
         EVENT_MANAGER:UnregisterForEvent( ITTsRosterBot.name, eventCode )
     end
 end
@@ -153,12 +152,12 @@ function ITTsRosterBot:Initialize()
         local text = ""
         local color = "FFFFFF"
 
-        if ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records and
-            ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[data.displayName] and
-            ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[data.displayName].first
+        if ITTsRosterBotData[ worldName ].guilds[ GUILD_ROSTER_MANAGER.guildId ].join_records and
+            ITTsRosterBotData[ worldName ].guilds[ GUILD_ROSTER_MANAGER.guildId ].join_records[ data.displayName ] and
+            ITTsRosterBotData[ worldName ].guilds[ GUILD_ROSTER_MANAGER.guildId ].join_records[ data.displayName ].first
         then
-            local joinedFirst = ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[
-                data.displayName].first
+            local joinedFirst = ITTsRosterBotData[ worldName ].guilds[ GUILD_ROSTER_MANAGER.guildId ].join_records[
+            data.displayName ].first
             local formatedTime = os.date( "*t", joinedFirst )
             local hour = formatedTime.hour
             local min = formatedTime.min
@@ -172,18 +171,18 @@ function ITTsRosterBot:Initialize()
             end
 
             timeString =
-            "|cF49B22Joined first: |C" ..
+                "|cF49B22Joined first: |C" ..
                 color ..
                 ZO_FormatDurationAgo( (GetTimeStamp() - joinedFirst) ) ..
                 " |c858585( " .. formatedTime.day .. "/" .. formatedTime.month .. "/" .. formatedTime.year .. " )" .. "\n"
         end
 
-        if ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records and
-            ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[data.displayName] and
-            ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[data.displayName].last
+        if ITTsRosterBotData[ worldName ].guilds[ GUILD_ROSTER_MANAGER.guildId ].join_records and
+            ITTsRosterBotData[ worldName ].guilds[ GUILD_ROSTER_MANAGER.guildId ].join_records[ data.displayName ] and
+            ITTsRosterBotData[ worldName ].guilds[ GUILD_ROSTER_MANAGER.guildId ].join_records[ data.displayName ].last
         then
-            local joinedLast = ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[
-                data.displayName].last
+            local joinedLast = ITTsRosterBotData[ worldName ].guilds[ GUILD_ROSTER_MANAGER.guildId ].join_records[
+            data.displayName ].last
             local formatedTime = os.date( "*t", joinedLast )
             local hour = formatedTime.hour
             local min = formatedTime.min
@@ -206,17 +205,17 @@ function ITTsRosterBot:Initialize()
             end
 
             joinString =
-            "|c00FFBFLatest join: |C" ..
+                "|c00FFBFLatest join: |C" ..
                 color ..
                 ZO_FormatDurationAgo( (GetTimeStamp() - joinedLast) ) ..
                 " |c858585( " .. formatedTime.day .. "/" .. formatedTime.month .. "/" .. formatedTime.year .. " )" .. "\n"
         end
 
-        if ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records and
-            ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[data.displayName] and
-            ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[data.displayName].import
+        if ITTsRosterBotData[ worldName ].guilds[ GUILD_ROSTER_MANAGER.guildId ].join_records and
+            ITTsRosterBotData[ worldName ].guilds[ GUILD_ROSTER_MANAGER.guildId ].join_records[ data.displayName ] and
+            ITTsRosterBotData[ worldName ].guilds[ GUILD_ROSTER_MANAGER.guildId ].join_records[ data.displayName ].import
         then
-            local import = ITTsRosterBotData[worldName].guilds[GUILD_ROSTER_MANAGER.guildId].join_records[data.displayName].import
+            local import = ITTsRosterBotData[ worldName ].guilds[ GUILD_ROSTER_MANAGER.guildId ].join_records[ data.displayName ].import
             local formatedTime = os.date( "*t", import )
             local hour = formatedTime.hour
             local min = formatedTime.min
@@ -230,7 +229,7 @@ function ITTsRosterBot:Initialize()
             end
 
             importString =
-            "|c00FFB2Imported: |CFFFFFF" ..
+                "|c00FFB2Imported: |CFFFFFF" ..
                 ZO_FormatDurationAgo( (GetTimeStamp() - import) ) ..
                 " |c858585( " .. formatedTime.day .. "/" .. formatedTime.month .. "/" .. formatedTime.year .. " )" .. "\n"
         end
@@ -299,11 +298,11 @@ function ITTsRosterBot:CacheMembers()
         if gname ~= "" then
             for l = 1, total do
                 local displayName, _, _, _, _ = GetGuildMemberInfo( guildId, l )
-                if self.memberCache[displayName] == nil then
-                    self.memberCache[displayName] = {}
+                if self.memberCache[ displayName ] == nil then
+                    self.memberCache[ displayName ] = {}
                 end
 
-                table.insert( self.memberCache[displayName], gname )
+                table.insert( self.memberCache[ displayName ], gname )
             end
         end
     end
@@ -329,7 +328,7 @@ function ITTsRosterBot:CreateStatusBox()
 end
 
 function ITTsRosterBot:BuildRelatedGuilds( displayName, currentGuild )
-    local guilds = self.memberCache[displayName]
+    local guilds = self.memberCache[ displayName ]
     local gtext = ""
 
     if guilds ~= nil then
@@ -360,55 +359,55 @@ function ITTsRosterBot:CheckGuildPermissions( newGuildId )
 
         logger:Info( "-----" )
         logger:Info( "Guild #" .. tostring( i ) .. " ", GetGuildName( guildId ), guildId )
-        local control = _G["ITTsRosterBotSettingsGuild" .. tostring( i )]
+        local control = _G[ "ITTsRosterBotSettingsGuild" .. tostring( i ) ]
 
         if guildId > 0 then
             -- end
             local guildName = GetGuildName( guildId )
-            local cachedSetting = ITTsRosterBot.db.settings.guilds[i].selected
+            local cachedSetting = ITTsRosterBot.db.settings.guilds[ i ].selected
 
-            if guildId ~= ITTsRosterBot.db.settings.guildsCache[i].id then
+            if guildId ~= ITTsRosterBot.db.settings.guildsCache[ i ].id then
                 logger:Info( "#" .. tostring( i ) .. " is a mis-match" )
 
                 for inc = 1, 5 do
                     logger:Info(
                         "CACHE CHECK for slot #" .. tostring( i ) .. " - [" .. tostring( inc ) .. "]",
-                        ITTsRosterBot.db.settings.guildsCache[inc].id,
+                        ITTsRosterBot.db.settings.guildsCache[ inc ].id,
                         guildId,
-                        ITTsRosterBot.db.settings.guildsCache[inc].id == guildId
+                        ITTsRosterBot.db.settings.guildsCache[ inc ].id == guildId
                     )
 
-                    if ITTsRosterBot.db.settings.guildsCache[inc].id == guildId then
-                        cachedSetting = ITTsRosterBot.db.settings.guildsCache[inc].selected
+                    if ITTsRosterBot.db.settings.guildsCache[ inc ].id == guildId then
+                        cachedSetting = ITTsRosterBot.db.settings.guildsCache[ inc ].selected
                         logger:Info( "The previous value was", cachedSetting )
                     end
                 end
             end
 
-            ITTsRosterBot.db.settings.guilds[i].name = guildName
-            ITTsRosterBot.db.settings.guilds[i].id = guildId
+            ITTsRosterBot.db.settings.guilds[ i ].name = guildName
+            ITTsRosterBot.db.settings.guilds[ i ].id = guildId
 
-            if newGuildId and ITTsRosterBot.db.settings.guilds[i].id == newGuildId then
-                ITTsRosterBot.db.settings.guilds[i].selected = true
-                ITTsRosterBot.db.settings.guilds[i].disabled = false
-            elseif "Guild Slot #" .. tostring( i ) == ITTsRosterBot.db.settings.guildsCache[i].name then
-                ITTsRosterBot.db.settings.guilds[i].selected = true
-                ITTsRosterBot.db.settings.guilds[i].disabled = false
+            if newGuildId and ITTsRosterBot.db.settings.guilds[ i ].id == newGuildId then
+                ITTsRosterBot.db.settings.guilds[ i ].selected = true
+                ITTsRosterBot.db.settings.guilds[ i ].disabled = false
+            elseif "Guild Slot #" .. tostring( i ) == ITTsRosterBot.db.settings.guildsCache[ i ].name then
+                ITTsRosterBot.db.settings.guilds[ i ].selected = true
+                ITTsRosterBot.db.settings.guilds[ i ].disabled = false
             end
 
             -- else
 
             -- ITTsRosterBot.db.settings.guilds[i].selected = false
-            ITTsRosterBot.db.settings.guilds[i].disabled = false
+            ITTsRosterBot.db.settings.guilds[ i ].disabled = false
         else
-            ITTsRosterBot.db.settings.guilds[i].name = "Guild Slot #" .. tostring( i )
-            ITTsRosterBot.db.settings.guilds[i].id = 0
-            ITTsRosterBot.db.settings.guilds[i].disabled = true
-            ITTsRosterBot.db.settings.guilds[i].selected = false
+            ITTsRosterBot.db.settings.guilds[ i ].name = "Guild Slot #" .. tostring( i )
+            ITTsRosterBot.db.settings.guilds[ i ].id = 0
+            ITTsRosterBot.db.settings.guilds[ i ].disabled = true
+            ITTsRosterBot.db.settings.guilds[ i ].selected = false
         end
 
         if control then
-            control.label:SetText( ITTsRosterBot.db.settings.guilds[i].name )
+            control.label:SetText( ITTsRosterBot.db.settings.guilds[ i ].name )
             control:UpdateValue()
             -- control.UpdateDisabled()
         end
@@ -420,7 +419,7 @@ end
 function ITTsRosterBot:SaveEvent( guildId, eventIndex )
     local timeStamp = GetTimeStamp()
     local eventType, secsSinceEvent, displayName, amount, arg1, _, _, _, id = GetGuildEventInfo( guildId,
-        GUILD_HISTORY_GENERAL, eventIndex )
+                                                                                                 GUILD_HISTORY_GENERAL, eventIndex )
 
     -- logger:Info(eventIndex, eventType)
 
@@ -434,16 +433,16 @@ function ITTsRosterBot:SaveEvent( guildId, eventIndex )
 
         logger:Info( "ITTsRosterBot:SaveEvent()", "#" .. tostring( eventIndex ), displayName, eventTimestamp, id )
 
-        if not ITTsRosterBotData[worldName].guilds[guildId].join_records[displayName] then
-            ITTsRosterBotData[worldName].guilds[guildId].join_records[displayName] = {}
-            ITTsRosterBotData[worldName].guilds[guildId].join_records[displayName].last = eventTimestamp
+        if not ITTsRosterBotData[ worldName ].guilds[ guildId ].join_records[ displayName ] then
+            ITTsRosterBotData[ worldName ].guilds[ guildId ].join_records[ displayName ] = {}
+            ITTsRosterBotData[ worldName ].guilds[ guildId ].join_records[ displayName ].last = eventTimestamp
         end
 
-        if ITTsRosterBotData[worldName].guilds[guildId].join_records[displayName].last ~= nil then
-            if eventTimestamp < ITTsRosterBotData[worldName].guilds[guildId].join_records[displayName].last - 86400 then
-                ITTsRosterBotData[worldName].guilds[guildId].join_records[displayName].first = eventTimestamp
+        if ITTsRosterBotData[ worldName ].guilds[ guildId ].join_records[ displayName ].last ~= nil then
+            if eventTimestamp < ITTsRosterBotData[ worldName ].guilds[ guildId ].join_records[ displayName ].last - 86400 then
+                ITTsRosterBotData[ worldName ].guilds[ guildId ].join_records[ displayName ].first = eventTimestamp
             else
-                ITTsRosterBotData[worldName].guilds[guildId].join_records[displayName].last = eventTimestamp
+                ITTsRosterBotData[ worldName ].guilds[ guildId ].join_records[ displayName ].last = eventTimestamp
             end
         end
     end
@@ -451,7 +450,7 @@ end
 
 function ITTsRosterBot:RunScanCycle( guildId, forceIndex )
     self.scanHistory = self.scanHistory or {}
-    local start = self.scanHistory[guildId] or 1
+    local start = self.scanHistory[ guildId ] or 1
     local numGuildEvents = GetNumGuildEvents( guildId, GUILD_HISTORY_GENERAL_ROSTER )
 
     if forceIndex then
@@ -459,13 +458,13 @@ function ITTsRosterBot:RunScanCycle( guildId, forceIndex )
     end
 
     logger:Info( "start:", start )
-    logger:Info( "scanHistory:", self.scanHistory[guildId] )
+    logger:Info( "scanHistory:", self.scanHistory[ guildId ] )
 
     for index = start, numGuildEvents do
         self:SaveEvent( guildId, index )
     end
 
-    self.scanHistory[guildId] = numGuildEvents + 1
+    self.scanHistory[ guildId ] = numGuildEvents + 1
 end
 
 function ITTsRosterBot:GetGuildMap()
@@ -473,27 +472,27 @@ function ITTsRosterBot:GetGuildMap()
 
     for i = 1, GetNumGuilds() do
         local guildId = GetGuildId( i )
-        if ITTsRosterBot.db.settings.guilds[i].selected and not ITTsRosterBot.db.settings.guilds[i].disabled then
-            guilds[#guilds + 1] = ITTsRosterBot.db.settings.guilds[i].id
+        if ITTsRosterBot.db.settings.guilds[ i ].selected and not ITTsRosterBot.db.settings.guilds[ i ].disabled then
+            guilds[ #guilds + 1 ] = ITTsRosterBot.db.settings.guilds[ i ].id
 
             if not ITTsRosterBotData then
                 ITTsRosterBotData = {}
             end
 
-            if not ITTsRosterBotData[worldName] then
-                ITTsRosterBotData[worldName] = {}
+            if not ITTsRosterBotData[ worldName ] then
+                ITTsRosterBotData[ worldName ] = {}
             end
 
-            if not ITTsRosterBotData[worldName].guilds then
-                ITTsRosterBotData[worldName].guilds = {}
+            if not ITTsRosterBotData[ worldName ].guilds then
+                ITTsRosterBotData[ worldName ].guilds = {}
             end
 
-            if not ITTsRosterBotData[worldName].guilds[guildId] then
-                ITTsRosterBotData[worldName].guilds[guildId] = {}
+            if not ITTsRosterBotData[ worldName ].guilds[ guildId ] then
+                ITTsRosterBotData[ worldName ].guilds[ guildId ] = {}
             end
 
-            if not ITTsRosterBotData[worldName].guilds[guildId].join_records then
-                ITTsRosterBotData[worldName].guilds[guildId].join_records = {}
+            if not ITTsRosterBotData[ worldName ].guilds[ guildId ].join_records then
+                ITTsRosterBotData[ worldName ].guilds[ guildId ].join_records = {}
             end
         end
     end
@@ -505,7 +504,7 @@ function ITTsRosterBot:IsGuildEnabled( guildId )
     local condition = false
 
     for i = 1, #list do
-        if guildId == list[i] then
+        if guildId == list[ i ] then
             condition = true
             break
         end
@@ -557,7 +556,7 @@ function ITTsRosterBot:RequestHistory( gID, guildHistoryCategory )
             logger:Info( "Total:", GetNumGuildEvents( gID, guildHistoryCategory ) )
 
             if GetNumGuildEvents( gID, guildHistoryCategory ) > 0 and
-                ITTsRosterBotData[worldName].guilds[gID].join_records == nil then -- ITTsRosterBotData[worldName].guilds[guildId].join_records
+                ITTsRosterBotData[ worldName ].guilds[ gID ].join_records == nil then -- ITTsRosterBotData[worldName].guilds[guildId].join_records
                 self:RunScanCycle( gID, 1 )
             end
         end
@@ -599,3 +598,4 @@ end
 -- Attach Listeners
 -- --------------------
 EVENT_MANAGER:RegisterForEvent( ITTsRosterBot.name, EVENT_ADD_ON_LOADED, ITTsRosterBot_OnAddOnLoaded )
+EVENT_MANAGER:RegisterForEvent( ITTsRosterBot.name, EVENT_PLAYER_ACTIVATED, OnPlayerActivated )
