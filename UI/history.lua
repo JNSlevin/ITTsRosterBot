@@ -197,7 +197,7 @@ local function SetupGuildEvent( self, control, data )
   end
 
   local description = self:FormatEvent( data.eventType, data.param1, data.param2, data.param3, data.param4, data.param5,
-    data.param6 )
+                                        data.param6 )
   local formattedTime = ZO_FormatDurationAgo( data.secsSinceEvent + GetGameTimeSeconds() - self.lastEventDataUpdateS )
 
   GetControl( control, "Description" ):SetText( description )
@@ -206,8 +206,8 @@ end
 
 local function renderHTags( data )
   if (
-      (data.eventType == GUILD_EVENT_GUILD_INVITE or data.eventType == GUILD_EVENT_GUILD_JOIN) and data.param2 ~= nil and
-          data.param1 ~= nil) then
+        (data.eventType == GUILD_EVENT_GUILD_INVITE or data.eventType == GUILD_EVENT_GUILD_JOIN) and data.param2 ~= nil and
+        data.param1 ~= nil) then
     data.param1 = formatDisplayNameLink( data.param1 )
     data.param2 = formatDisplayNameLink( data.param2 )
   end
@@ -236,10 +236,10 @@ local function renderHTags( data )
   end
 
   if (
-      (
+        (
           data.eventType == GUILD_EVENT_ITEM_SOLD or data.eventType == GUILD_EVENT_BANKITEM_REMOVED or
-              data.eventType == GUILD_EVENT_BANKGOLD_REMOVED) and
-          data.param1 ~= nil)
+          data.eventType == GUILD_EVENT_BANKGOLD_REMOVED) and
+        data.param1 ~= nil)
   then
     data.param1 = formatDisplayNameLink( data.param1 )
   end
@@ -264,19 +264,19 @@ local function GuildHistoryManagerFilterScrollList( self )
   local searchValue = ITTsRosterBot.UI.historySearchBox:GetText()
 
   for i = 1, #self.masterList do
-    local data = self.masterList[i]
+    local data = self.masterList[ i ]
 
     if self.selectedSubcategory == nil or self.selectedSubcategory == data.subcategoryId then
       if (ITTsRosterBot.db.UI.history.gold == false and
-          (data.eventType == GUILD_EVENT_BANKGOLD_ADDED or data.eventType == GUILD_EVENT_BANKGOLD_ADDED or
-              data.eventType == GUILD_EVENT_BANKGOLD_GUILD_STORE_TAX or
+            (data.eventType == GUILD_EVENT_BANKGOLD_ADDED or data.eventType == GUILD_EVENT_BANKGOLD_ADDED or
+              --  data.eventType == GUILD_EVENT_BANKGOLD_GUILD_STORE_TAX or
               data.eventType == GUILD_EVENT_BANKGOLD_KIOSK_BID or
               data.eventType == GUILD_EVENT_BANKGOLD_KIOSK_BID_REFUND or
-              data.eventType == GUILD_EVENT_BANKGOLD_PURCHASE_HERALDRY or
+              -- data.eventType == GUILD_EVENT_BANKGOLD_PURCHASE_HERALDRY or
               data.eventType == GUILD_EVENT_BANKGOLD_REMOVED))
       then
       elseif (ITTsRosterBot.db.UI.history.item == false and
-          (data.eventType == GUILD_EVENT_BANKITEM_ADDED or data.eventType == GUILD_EVENT_BANKITEM_REMOVED))
+            (data.eventType == GUILD_EVENT_BANKITEM_ADDED or data.eventType == GUILD_EVENT_BANKITEM_REMOVED))
       then
       else
         -- if searchValue and (searchValue ~= '' or searchValue ~= nil) then
@@ -302,11 +302,11 @@ local function GuildHistoryManagerFilterScrollList( self )
   end
 
   local hasEntries = #scrollData > 0
-  self.noEntriesMessageLabel:SetHidden( hasEntries )
-  if not hasEntries then
+  --self.noEntriesMessageLabel:SetHidden( hasEntries )
+  --[[ if not hasEntries then
     self.noEntriesMessageLabel:SetText( ZO_GuildHistory_GetNoEntriesText( self.selectedCategory, self.selectedSubcategory,
-      self.guildId ) )
-  end
+                                                                          self.guildId ) )
+  end ]]
 end
 
 -- From pChat

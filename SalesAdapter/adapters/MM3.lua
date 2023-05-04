@@ -9,7 +9,7 @@ Adapter.salesColumnKey = "MM_Sold"
 Adapter.purchasesColumnKey = "MM_Bought"
 
 function Adapter:Available()
-    return MasterMerchant and _G["LibGuildStore_Internal"].LibHistoireListener
+    return MasterMerchant and _G[ "LibGuildStore_Internal" ].LibHistoireListener
 end
 
 local MM_TimeIndexOptions = {
@@ -26,21 +26,33 @@ local MM_TimeIndexOptions = {
 function Adapter:Initialize()
 end
 
+-- Date Time Ranges for API from MM (provided by @Sharlikran)
+local MM_DATERANGE_TODAY = 1
+local MM_DATERANGE_YESTERDAY = 2
+local MM_DATERANGE_THISWEEK = 3
+local MM_DATERANGE_LASTWEEK = 4
+local MM_DATERANGE_PRIORWEEK = 5
+local MM_DATERANGE_7DAY = 6
+local MM_DATERANGE_10DAY = 7
+local MM_DATERANGE_30DAY = 8
+local MM_DATERANGE_CUSTOM = 9
+
 Adapter.DonationMapOptions = {}
-Adapter.DonationMapOptions[1] = 1
-Adapter.DonationMapOptions[2] = 2
-Adapter.DonationMapOptions[3] = 4
-Adapter.DonationMapOptions[4] = 5
-Adapter.DonationMapOptions[5] = 7
-Adapter.DonationMapOptions[7] = 6
-Adapter.DonationMapOptions[8] = 10
+Adapter.DonationMapOptions[ MM_DATERANGE_TODAY ] = 1
+Adapter.DonationMapOptions[ MM_DATERANGE_YESTERDAY ] = 2
+Adapter.DonationMapOptions[ MM_DATERANGE_THISWEEK ] = 4
+Adapter.DonationMapOptions[ MM_DATERANGE_LASTWEEK ] = 5
+Adapter.DonationMapOptions[ MM_DATERANGE_PRIORWEEK ] = 6
+Adapter.DonationMapOptions[ MM_DATERANGE_7DAY ] = 7
+Adapter.DonationMapOptions[ MM_DATERANGE_10DAY ] = 8
+Adapter.DonationMapOptions[ MM_DATERANGE_30DAY ] = 10
 
 function Adapter:GetTimeRangeOptions()
     return MM_TimeIndexOptions
 end
 
 function Adapter:RefreshAllGuildTotals( start, finish )
-    local data = _G["LibGuildStore_Internal"].guildSales
+    local data = _G[ "LibGuildStore_Internal" ].guildSales
     local sales = {}
 
     if type( data ) == "table" then
@@ -48,7 +60,7 @@ function Adapter:RefreshAllGuildTotals( start, finish )
             local guild = ITTsRosterBot.Utils:GetGuildDetails( { name = k } )
 
             if ITTsRosterBot:IsGuildEnabled( guild.id ) then
-                sales[guild.id] = data[k].sales[ITTsRosterBot.db.timeFrameIndex] or 0
+                sales[ guild.id ] = data[ k ].sales[ ITTsRosterBot.db.timeFrameIndex ] or 0
             end
         end
     end
@@ -72,27 +84,27 @@ end
 
 function Adapter:GetSaleInformation( guildId, displayName, start, finish )
     local guild = ITTsRosterBot.Utils:GetGuildDetails( { id = guildId } )
-    local MasterMerchant = _G["LibGuildStore_Internal"]
+    local MasterMerchant = _G[ "LibGuildStore_Internal" ]
     local sales = 0
     local purchases = 0
 
-    if MasterMerchant.guildPurchases and MasterMerchant.guildPurchases[GUILD_ROSTER_MANAGER.guildName] and
-        MasterMerchant.guildPurchases[GUILD_ROSTER_MANAGER.guildName].sellers and
-        MasterMerchant.guildPurchases[GUILD_ROSTER_MANAGER.guildName].sellers[displayName] and
-        MasterMerchant.guildPurchases[GUILD_ROSTER_MANAGER.guildName].sellers[displayName].sales
+    if MasterMerchant.guildPurchases and MasterMerchant.guildPurchases[ GUILD_ROSTER_MANAGER.guildName ] and
+        MasterMerchant.guildPurchases[ GUILD_ROSTER_MANAGER.guildName ].sellers and
+        MasterMerchant.guildPurchases[ GUILD_ROSTER_MANAGER.guildName ].sellers[ displayName ] and
+        MasterMerchant.guildPurchases[ GUILD_ROSTER_MANAGER.guildName ].sellers[ displayName ].sales
     then
         purchases =
-        MasterMerchant.guildPurchases[GUILD_ROSTER_MANAGER.guildName].sellers[displayName].sales[
-            ITTsRosterBot.db.timeFrameIndex or 1] or 0
+            MasterMerchant.guildPurchases[ GUILD_ROSTER_MANAGER.guildName ].sellers[ displayName ].sales[
+            ITTsRosterBot.db.timeFrameIndex or 1 ] or 0
     end
 
-    if MasterMerchant.guildSales and MasterMerchant.guildSales[GUILD_ROSTER_MANAGER.guildName] and
-        MasterMerchant.guildSales[GUILD_ROSTER_MANAGER.guildName].sellers and
-        MasterMerchant.guildSales[GUILD_ROSTER_MANAGER.guildName].sellers[displayName] and
-        MasterMerchant.guildSales[GUILD_ROSTER_MANAGER.guildName].sellers[displayName].sales
+    if MasterMerchant.guildSales and MasterMerchant.guildSales[ GUILD_ROSTER_MANAGER.guildName ] and
+        MasterMerchant.guildSales[ GUILD_ROSTER_MANAGER.guildName ].sellers and
+        MasterMerchant.guildSales[ GUILD_ROSTER_MANAGER.guildName ].sellers[ displayName ] and
+        MasterMerchant.guildSales[ GUILD_ROSTER_MANAGER.guildName ].sellers[ displayName ].sales
     then
-        sales = MasterMerchant.guildSales[GUILD_ROSTER_MANAGER.guildName].sellers[displayName].sales[
-            ITTsRosterBot.db.timeFrameIndex or 1] or 0
+        sales = MasterMerchant.guildSales[ GUILD_ROSTER_MANAGER.guildName ].sellers[ displayName ].sales[
+        ITTsRosterBot.db.timeFrameIndex or 1 ] or 0
     end
 
     return {
