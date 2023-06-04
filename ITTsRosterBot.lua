@@ -7,7 +7,7 @@ ITTsRosterBot.db = db
 local logger = LibDebugLogger( ITTsRosterBot.name )
 -- local LH = LibHistoire
 
-logger:SetEnabled( false )
+logger:SetEnabled( true )
 
 local chat = LibChatMessage( "ITTsRosterBot", "ITTs-RB" )
 
@@ -34,7 +34,14 @@ local defaults = {
         services = {
             sales = "MM3"
         },
-        historyHighlighting = true
+        historyHighlighting = true,
+        applications = {
+            applicationAttachment = true,
+            sales = 14,
+            rankIcon = true,
+            donations = true,
+            guildName = true
+        }
     },
     newcomer = 7,
     oldNumber = 180,
@@ -52,26 +59,70 @@ local worldName = GetWorldName()
 -- --------------------
 -- Application Append
 -- --------------------
-
+local function GetApplicationAppendage( guildId, displayName )
+    local memberInfo = ITTsRosterBot.Utils:GetRelatedGuildInfo( displayName )
+    --/esoui/art/miscellaneous/wide_divider_left.dds
+    local guildName = ""
+    local rankIconString = "x"
+    --logger:Debug( #memberInfo )
+    local text = ""
+    local salesString = ""
+    local sales = 0
+    local donations = 0
+    local donationString = ""
+    local t1 = {}
+    local divider = "" -- "|t500:5:/esoui/art/charactercreate/windowdivider.dds|t
+    for i = 1, #memberInfo do
+        local timeframe = ITTsRosterBot.db.settings.applications.sales
+        donations = ITTsDonationBot:QueryValues( memberInfo[ i ].guildId, displayName, GetTimeStamp() - (timeframe * SECONDS_IN_DAY),
+                                                 GetTimeStamp() )
+        if ITTsRosterBot.SalesAdapter:Selected() ~= nil then
+            sales = ITTsRosterBot.SalesAdapter:GetSaleInformation( memberInfo[ i ].guildId, displayName,
+                                                                   GetTimeStamp() - (timeframe * SECONDS_IN_DAY),
+                                                                   GetTimeStamp() ).sales
+        end
+        if ITTsRosterBot.db.settings.applications.guildName == true then
+            guildName = GetGuildName( memberInfo[ i ].guildId )
+        end
+        if ITTsRosterBot.db.settings.applications.rankIcon == true then
+            rankIconString = memberInfo[ i ].rankIconString
+        end
+        if ITTsRosterBot.db.settings.applications.sales > 0 then
+            salesString = "|r\n\t\t\t\t\t\t\tSales: " ..
+                ZO_CommaDelimitNumber( sales ) .. " |t20:20:EsoUI/Art/currency/currency_gold.dds|t"
+        end
+        if ITTsRosterBot.db.settings.applications.donations == true then
+            donationString = "|r\n\t\t\t\t\t\t\tDonations: " ..
+                ZO_CommaDelimitNumber( donations ) .. " |t20:20:EsoUI/Art/currency/currency_gold.dds|t"
+        end
+        -- logger:Warn( rankIconString )
+        t1[ i ] = "|c" ..
+            memberInfo[ i ].guildColor ..
+            rankIconString ..
+            guildName ..
+            salesString ..
+            donationString
+        -- text = text .. "|c" .. memberInfo[ i ].guildColor .. memberInfo[ i ].guildName .. memberInfo[ i ].rankIconString
+    end
+    if ITTsRosterBot.db.settings.applications.applicationAttachment == true then
+        text = table.concat( t1, "\n|t200:10:/esoui/art/miscellaneous/wide_divider_left.dds|t\n" )
+    end
+    -- logger:Debug( text )
+    -- local relatedGuilds = ITTsRosterBot:BuildRelatedGuilds( displayName, GetGuildName(GUILD_ROSTER_MANAGER.guildId) )
+    local relatedGuilds, test = ITTsRosterBot.Utils:BuildInlineRelatedGuilds( displayName, guildId )
+    --logger:Warn( test )
+    if relatedGuilds ~= "" then
+        text = "\n|C4bc8ebRelated Guilds:|C999999 \n" .. text
+    end
+    return text
+end
 function ZO_GuildRecruitment_ApplicationsList_Row_OnMouseEnter( control )
     GUILD_RECRUITMENT_APPLICATIONS_KEYBOARD:GetSubcategoryManager(
         ZO_GUILD_RECRUITMENT_APPLICATIONS_SUBCATEGORY_KEYBOARD_RECEIVED ):Row_OnMouseEnter( control )
-    -- d('Over ride')
-    -- local data = ZO_ScrollList_GetData(control)
-    -- self.currentData = data
-    local displayName = control:GetNamedChild( "Name" ):GetText()
-
     local originalMessage = GUILD_FINDER_MANAGER.applicationKeyboardTooltipInfo.messageControl:GetText()
-
-    local text = ""
-
-    -- local relatedGuilds = ITTsRosterBot:BuildRelatedGuilds( displayName, GetGuildName(GUILD_ROSTER_MANAGER.guildId) )
-    local relatedGuilds = ITTsRosterBot.Utils:BuildInlineRelatedGuilds( displayName, GUILD_ROSTER_MANAGER.guildId )
-
-    if relatedGuilds ~= "" then
-        text = "\n\n" .. text .. "|C4bc8ebRelated Guilds:|C999999 " .. relatedGuilds .. "\n"
-    end
-
+    local guildId = GUILD_ROSTER_MANAGER.guildId
+    local displayName = control:GetNamedChild( "Name" ):GetText()
+    local text = GetApplicationAppendage( guildId, displayName )
     GUILD_FINDER_MANAGER.applicationKeyboardTooltipInfo.messageControl:SetText( originalMessage .. text )
 end
 
@@ -99,7 +150,7 @@ local function ITTsRosterBot_OnAddOnLoaded( eventCode, addOnName )
         db = ZO_SavedVars:NewAccountWide( "ITTsRosterBotSettings", 2, nil, defaults )
         ITTsRosterBot.db = db
 
-        MyChatHandlersMessageChannelFormatter()
+        --MyChatHandlersMessageChannelFormatter()
         EVENT_MANAGER:UnregisterForEvent( ITTsRosterBot.name, eventCode )
     end
 end
@@ -286,6 +337,35 @@ function ITTsRosterBot:Initialize()
         end
 
         self:EnterRow( row )
+    end
+end
+
+function ITTsRosterBot:SelectSalesService( choice )
+    if choice ~= "None" then
+        for k, v in pairs( ITTsRosterBot.SalesAdapter.adapters ) do
+            logger:Info( choice )
+            if ITTsRosterBot.SalesAdapter.adapters[ k ].settingsLabel == choice then
+                choice = ITTsRosterBot.SalesAdapter.adapters[ k ].name
+                if ITTsRosterBot.SalesAdapter.adapters[ k ]:Available() then
+                    ITTsRosterBot.SalesAdapter.adapters[ k ]:ShowUI()
+                    ITTsRosterBot.UI:ConfigureDropdown()
+                    ITTsRosterBot.UI:CheckServiceStatus()
+                end
+            end
+        end
+    end
+
+
+
+
+    ITTsRosterBot.db.settings.services.sales = choice
+    if ITTsRosterBot.db.settings.services.sales ~= "None" then
+        ITTsRosterBot_SalesTotalTitle:SetText(
+            "|t20:20:EsoUI/Art/Guild/guild_tradingHouseAccess.dds|t SALES   |c66ffc2[ " ..
+            ITTsRosterBot.db.settings.services.sales .. " ]"
+        )
+    else
+        ITTsRosterBot_SalesTotalTitle:SetText( "|t20:20:EsoUI/Art/Guild/guild_tradingHouseAccess.dds|t SALES" )
     end
 end
 

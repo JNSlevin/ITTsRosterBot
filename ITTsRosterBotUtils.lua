@@ -2,9 +2,12 @@ local Utils = {}
 ITTsRosterBot.Utils = Utils
 
 Utils.memberCache = {}
-
+local logger = LibDebugLogger( ITTsRosterBot.name .. " - Utils" )
+logger:SetEnabled( false )
 d( "Should be assigning" )
-
+local SECONDS_IN_HOUR = 60 * 60
+local SECONDS_IN_DAY = SECONDS_IN_HOUR * 24
+local SECONDS_IN_WEEK = SECONDS_IN_DAY * 7
 function Utils:CacheMembers()
     for i = 1, GetNumGuilds() do
         local guildId = GetGuildId( i )
@@ -15,11 +18,11 @@ function Utils:CacheMembers()
             for l = 1, total do
                 local displayName, _, _, _, _ = GetGuildMemberInfo( guildId, l )
 
-                if self.memberCache[displayName] == nil then
-                    self.memberCache[displayName] = {}
+                if self.memberCache[ displayName ] == nil then
+                    self.memberCache[ displayName ] = {}
                 end
 
-                table.insert( self.memberCache[displayName], gname )
+                table.insert( self.memberCache[ displayName ], gname )
             end
         end
     end
@@ -74,7 +77,7 @@ function Utils:GetGuildDetails( settings )
 end
 
 function Utils:GetGuildColor( guildIndex )
-    local r, g, b = GetChatCategoryColor( _G["CHAT_CATEGORY_GUILD_" .. tostring( guildIndex )] )
+    local r, g, b = GetChatCategoryColor( _G[ "CHAT_CATEGORY_GUILD_" .. tostring( guildIndex ) ] )
     local colorObject = ZO_ColorDef:New( r, g, b )
 
     return {
@@ -95,7 +98,7 @@ end
 function Utils:BuildInlineRelatedGuilds( displayName, guildId )
     -- d(displayName, guildId)
 
-    local guilds = self.memberCache[displayName]
+    local guilds = self.memberCache[ displayName ]
     -- local gtext  = ""
     local guildList = {}
     local currentGuild = { name = "" }
@@ -122,4 +125,36 @@ function Utils:BuildInlineRelatedGuilds( displayName, guildId )
     end
 
     return table.concat( guildList, "|cFFFFFF, " ), #guildList
+end
+
+--ITTsRosterBot.Utils:GetRelatedGuildInfo("@JN_Sepi0I")
+--|H1:guild:559830|hEternal Forest Merchantry|h
+function Utils:GetRelatedGuildInfo( displayName )
+    local memberInfo = {}
+    local count = 0
+    for i = 1, GetNumGuilds() do
+        local guildId = GetGuildId( i )
+        local memberIndex = GetGuildMemberIndexFromDisplayName( guildId, displayName )
+        local sales = 0
+        local name, memberNote, rankIndex, _, _ = GetGuildMemberInfo( guildId, memberIndex )
+        if displayName == name then
+            count = count + 1
+            local iconIndex = GetGuildRankIconIndex( guildId, rankIndex )
+            local rankIcon = GetGuildRankLargeIcon( iconIndex )
+            local guildColor = self:GetGuildColor( i ).hex
+            rankIcon = "|t25:25:" .. rankIcon .. ":inheritcolor|t"
+
+            logger:Warn( rankIcon )
+            if ITTsRosterBot:IsGuildEnabled( guildId ) then
+                memberInfo[ count ] = {
+                    rankIndex = rankIndex,
+                    rankIconString = rankIcon,
+                    guildColor = guildColor,
+                    guildId = guildId
+                }
+            end
+        end
+    end
+
+    return memberInfo
 end
