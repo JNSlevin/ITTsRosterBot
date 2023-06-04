@@ -197,77 +197,9 @@
             </Controls>
         </TopLevelControl>
 
-        <Control name="ITTsRosterBot_GuildTab" mouseEnabled="true" tier="2" layer="CONTROLS" virtual="true">
-            <Dimensions x="184" y="51" />
-            <Controls>
-
-                <Backdrop name="$(parent)_TopBorder" edgeColor="292929" centerColor="292929">
-                    <Dimensions x="185" y="8" />
-                    <Edge edgeSize="1" alpha="0" />
-                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="-7" />
-                </Backdrop>
-
-                <Backdrop name="$(parent)_GuildColor" edgeColor="292929" centerColor="292929" hidden="true">
-                    <Dimensions x="183" y="9" />
-                    <Edge edgeSize="1" alpha="0" />
-                    <Anchor point="TOPLEFT" relativeTo="$(parent)_TopBorder" relativePoint="TOPLEFT" offsetX="1" offsetY="1" />
-                </Backdrop>
-
-                <Backdrop name="$(parent)_BottomBorder" edgeColor="292929" centerColor="292929">
-                    <Dimensions x="185" y="1" />
-                    <Edge edgeSize="1" alpha="0" />
-                    <Anchor point="BOTTOMLEFT" relativeTo="$(parent)" relativePoint="BOTTOMLEFT" offsetY="1" />
-                </Backdrop>
-
-                <Backdrop name="$(parent)_RightBorder" edgeColor="292929" centerColor="292929">
-                    <Dimensions x="1" y="51" />
-                    <Edge edgeSize="1" alpha="0" />
-                    <Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="1" />
-                </Backdrop>
-
-                 <Button name="$(parent)_Button" inherits="ZO_ButtonBehaviorClickSound" tier="2">
-                     <AnchorFill/>
-                 </Button>
-
-                <Label name="$(parent)Name" text="-Cashflow" verticalAlignment="CENTER" horizontalAlignment="CENTER" wrapMode="TEXT_WRAP_MODE_TRUNCATE" color="FFFFFF" font="$(BOLD_FONT)|19|shadow">
-                    <Anchor point="CENTER" relativeTo="$(parent)" relativePoint="CENTER" />
-                    <Dimensions x="165" y="51" />
-                </Label>
-            </Controls>
-        </Control>
-
-        <Control name="ITTRB_GuildSettings_ScrollContainer" inherits="ZO_ScrollContainer" virtual="true">
-            <Dimensions x="900" y="546" />
-            <Anchor point="TOPLEFT" offsetX="20" offsetY="140" />
-            <Controls>
-                <Backdrop name="$(parent)_Content" edgeColor="000000" centerColor="000000">
-                    <Dimensions x="880" y="1000"/>
-                    <Edge edgeSize="1" alpha="0" />
-                    <Controls>
-                        <Label name="$(parent)GuildName" text="Shinning Coins Settings.." inherits="ZO_DialogContentAnchors" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_NORMAL" font="ZoFontGameShadow">
-                            <Anchor point="TOPLEFT" relativeTo="$(parent)BGtest" relativePoint="TOPLEFT" offsetY="15" offsetX="5" />
-                        </Label>
 
 
-
-                    </Controls>
-                </Backdrop>
-            </Controls>
-        </Control>
-
-        <TopLevelControl name="RB_NoteSettingsTest" inherits="ZO_CustomDialogBase" hidden="true">
-            <Dimensions x="945" y="730"/>
-            <OnInitialized>
-               RB_NoteSettingsTest_OnInitialized(self)
-            </OnInitialized>
-            <Controls>
-                <Label name="$(parent)AddonName" text="ITTs Roster Bot" color="292929" font="$(BOLD_FONT)|15|shadow-thin">
-                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="8" offsetX="10" />
-                </Label>
-
-                <Control name="$(parent)Done" inherits="ZO_CustomDialogButton"/>
-            </Controls>
-        </TopLevelControl>
-
+  
+        
     </Controls>
 </GuiXml>

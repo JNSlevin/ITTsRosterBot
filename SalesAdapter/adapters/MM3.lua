@@ -9,7 +9,13 @@ Adapter.salesColumnKey = "MM_Sold"
 Adapter.purchasesColumnKey = "MM_Bought"
 
 function Adapter:Available()
-    return MasterMerchant and _G[ "LibGuildStore_Internal" ].LibHistoireListener
+    local condition = false
+
+    if MasterMerchant and _G[ "LibGuildStore_Internal" ].LibHistoireListener then
+        condition = true
+    end
+
+    return condition
 end
 
 local MM_TimeIndexOptions = {
