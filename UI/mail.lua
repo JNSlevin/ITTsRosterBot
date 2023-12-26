@@ -11,8 +11,6 @@ local function EditNoteDialogSetup( dialog, data )
 end
 
 function RB_EditMailNoteDialog_OnInitialized( self )
-    d( "Registered EDIT_MAIL_NOTE" )
-
     ZO_Dialogs_RegisterCustomDialog( "EDIT_MAIL_NOTE", {
         customControl = self,
         setup = EditNoteDialogSetup,
@@ -72,7 +70,8 @@ function ZO_MailInboxShared_UpdateInbox( mailData, ... )
 
             if DoesPlayerHaveGuildPermission( guild.id, GUILD_PERMISSION_NOTE_EDIT ) then
                 Mail.GuildList[ labelIndex ]:GetNamedChild( "Text" ):SetText( relatedGuilds[ i ] )
-                Mail.GuildList[ labelIndex ]:GetNamedChild( "Text" ):SetColor( unpack( ITTsRosterBot.Utils:GetGuildColor( guild
+                Mail.GuildList[ labelIndex ]:GetNamedChild( "Text" ):SetColor( unpack( ITTsRosterBot.Utils:GetGuildColor(
+                    guild
                     .index ).rgb ) )
                 Mail.GuildList[ labelIndex ]:SetHidden( false )
 
@@ -83,7 +82,8 @@ function ZO_MailInboxShared_UpdateInbox( mailData, ... )
                                                              local memberIndex = 0
 
                                                              for guildMemberIndex = 1, numGuildMembers do
-                                                                 local displayName, note = GetGuildMemberInfo( guild.id, guildMemberIndex )
+                                                                 local displayName, note = GetGuildMemberInfo( guild.id,
+                                                                     guildMemberIndex )
                                                                  if mailData.senderDisplayName == displayName then
                                                                      currentNote = note
                                                                      memberIndex = guildMemberIndex

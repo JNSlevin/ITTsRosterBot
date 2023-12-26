@@ -93,7 +93,12 @@ function Adapter:GetSaleInformation( guildId, displayName, start, finish )
     local MasterMerchant = _G[ "LibGuildStore_Internal" ]
     local sales = 0
     local purchases = 0
-
+    if not MasterMerchant then
+        return {
+            sales = 0,
+            purchases = 0
+        }
+    end
     if MasterMerchant.guildPurchases and MasterMerchant.guildPurchases[ GUILD_ROSTER_MANAGER.guildName ] and
         MasterMerchant.guildPurchases[ GUILD_ROSTER_MANAGER.guildName ].sellers and
         MasterMerchant.guildPurchases[ GUILD_ROSTER_MANAGER.guildName ].sellers[ displayName ] and

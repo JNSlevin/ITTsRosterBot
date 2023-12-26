@@ -6,7 +6,7 @@ local selectedRankIndex = 1
 local playerName = GetDisplayName()
 local worldName = GetWorldName()
 local LTF = LibTextFilter
-local logger = LibDebugLogger
+
 
 local function calculateSidebarPerc( current, max )
   local perc = math.floor( ((100 / max) * current) + 0.5 )
@@ -38,7 +38,7 @@ function UI:isRanksSelected()
   local condition = false
 
   for i = 1, #ITTsRosterBot.selectedRanks do
-    if ITTsRosterBot.selectedRanks[i] then
+    if ITTsRosterBot.selectedRanks[ i ] then
       condition = true
       break
     end
@@ -124,16 +124,16 @@ local function applyOfflineTemplates( data, columnCheckSaleData )
     local hasColumnPurchases = (columnCheckSaleData and data.ITT_Purchases and data.ITT_Purchases > 0)
 
     if (
-        (hasDonated or hasColumnPurchases) and
-            ((UI.selectedRankIndex >= 1 and UI.selectedRankIndex <= 5) and data.secsSinceLogoff > (10 * 86400))) or
+          (hasDonated or hasColumnPurchases) and
+          ((UI.selectedRankIndex >= 1 and UI.selectedRankIndex <= 5) and data.secsSinceLogoff > (10 * 86400))) or
         (
-        (hasDonated or hasColumnPurchases) and
-            ((UI.selectedRankIndex >= 4 and UI.selectedRankIndex <= 7) and data.secsSinceLogoff > (14 * 86400))) or
+          (hasDonated or hasColumnPurchases) and
+          ((UI.selectedRankIndex >= 4 and UI.selectedRankIndex <= 7) and data.secsSinceLogoff > (14 * 86400))) or
         ((hasDonated or hasColumnPurchases) and (UI.selectedRankIndex == 8 and data.secsSinceLogoff > (10 * 86400))) or
         ((hasDonated or hasColumnPurchases) and (UI.selectedRankIndex == 9 and data.secsSinceLogoff > (14 * 86400))) or
         (
-        (hasDonated or hasColumnPurchases) and
-            ((UI.selectedRankIndex == 10 or UI.selectedRankIndex == 11) and data.secsSinceLogoff > (30 * 86400))) or
+          (hasDonated or hasColumnPurchases) and
+          ((UI.selectedRankIndex == 10 or UI.selectedRankIndex == 11) and data.secsSinceLogoff > (30 * 86400))) or
         (data.secsSinceLogoff > (30 * 86400) and (columnCheckSaleData and data.ITT_Sales and data.ITT_Sales > 0))
     then
       activity = true
@@ -170,16 +170,16 @@ local function applySalesTemplates( data, columnCheckSaleData )
   local sales = 0
   local purchases = 0
 
-  if columnCheckSaleData and data[ITTsRosterBot.SalesAdapter:Selected().salesColumnKey] then
-    purchases = data[ITTsRosterBot.SalesAdapter:Selected().purchasesColumnKey]
+  if columnCheckSaleData and data[ ITTsRosterBot.SalesAdapter:Selected().salesColumnKey ] then
+    purchases = data[ ITTsRosterBot.SalesAdapter:Selected().purchasesColumnKey ]
   end
 
-  if columnCheckSaleData and data[ITTsRosterBot.SalesAdapter:Selected().salesColumnKey] and UI.salesTotal then
-    sales = tonumber( data[ITTsRosterBot.SalesAdapter:Selected().salesColumnKey] )
+  if columnCheckSaleData and data[ ITTsRosterBot.SalesAdapter:Selected().salesColumnKey ] and UI.salesTotal then
+    sales = tonumber( data[ ITTsRosterBot.SalesAdapter:Selected().salesColumnKey ] )
   else
-    local start, finish = ITTsDonationBot.reportQueries[UI.selectedRankIndex].range()
+    local start, finish = ITTsDonationBot.reportQueries[ UI.selectedRankIndex ].range()
     local userInformation = ITTsRosterBot.SalesAdapter:GetSaleInformation( GUILD_ROSTER_MANAGER.guildId, data.displayName,
-      start, finish )
+                                                                           start, finish )
 
     sales = userInformation.sales
     purchases = userInformation.purchases
@@ -245,7 +245,7 @@ local function rosterFilterScrollList( self )
   local columnCheckSaleData = ITTsRosterBot.SalesAdapter:IsColumnCheckingEnabled()
 
   for i = 1, #masterList do
-    local data = masterList[i]
+    local data = masterList[ i ]
     -- logger:Info(data)
     if trackDonations and UI.donationsTotal then
       UI.donationsTotalMaxValue = UI.donationsTotalValue + tonumber( data.ITT_Donations )
@@ -258,7 +258,7 @@ local function rosterFilterScrollList( self )
       if not hideOffline or data.online or data.rankId == DEFAULT_INVITED_RANK then
         if isRanksSelected then
           for i = 1, #ITTsRosterBot.selectedRanks do
-            if ITTsRosterBot.selectedRanks[i] and (data.rankIndex and i == data.rankIndex) then
+            if ITTsRosterBot.selectedRanks[ i ] and (data.rankIndex and i == data.rankIndex) then
               table.insert( scrollData, ZO_ScrollList_CreateDataEntry( 1, data ) )
               validRowCount = validRowCount + 1
 
@@ -332,7 +332,7 @@ local function createRankSelectTiles()
 
   for i = 1, 10 do
     local rankFilter = CreateControlFromVirtual( "ITTsRosterBot_ControlsAreaRankFilter" .. i, ITTsRosterBot_Controls,
-      "ITTsRosterBot_RankFilter" )
+                                                 "ITTsRosterBot_RankFilter" )
     rankFilter:GetNamedChild( "_BG" ):SetEdgeColor( ZO_ColorDef:New( 0, 0, 0, 0 ):UnpackRGBA() )
     -- rankFilter:GetNamedChild('_Icon'):SetTexture(GetGuildRankSmallIcon(iconIndex))
     rankFilter:SetHidden( true )
@@ -347,48 +347,48 @@ local function createRankSelectTiles()
     end
 
     rankFilter:GetNamedChild( "_Button" )._activeIndex = i
-    ITTsRosterBot.selectedRanks[i] = false
+    ITTsRosterBot.selectedRanks[ i ] = false
     table.insert( UI.rankTiles, rankFilter )
 
-    UI.rankTiles[i]:GetNamedChild( "_Button" ):SetHandler(
+    UI.rankTiles[ i ]:GetNamedChild( "_Button" ):SetHandler(
       "OnMouseEnter",
       function( control )
         InitializeTooltip( InformationTooltip )
         InformationTooltip:ClearAnchors()
         InformationTooltip:SetOwner( control, BOTTOM, 0, 0 )
-        if ITTsRosterBot.guildRanks[control._activeIndex] then
-          InformationTooltip:AddLine( ITTsRosterBot.guildRanks[control._activeIndex].name, "",
-            ZO_TOOLTIP_DEFAULT_COLOR:UnpackRGB() )
+        if ITTsRosterBot.guildRanks[ control._activeIndex ] then
+          InformationTooltip:AddLine( ITTsRosterBot.guildRanks[ control._activeIndex ].name, "",
+                                      ZO_TOOLTIP_DEFAULT_COLOR:UnpackRGB() )
         end
 
-        if not ITTsRosterBot.selectedRanks[control._activeIndex] then
-          UI.rankTiles[i]:GetNamedChild( "_BG" ):SetCenterColor( ZO_ColorDef:New( "6d6d6d" ):UnpackRGBA() )
+        if not ITTsRosterBot.selectedRanks[ control._activeIndex ] then
+          UI.rankTiles[ i ]:GetNamedChild( "_BG" ):SetCenterColor( ZO_ColorDef:New( "6d6d6d" ):UnpackRGBA() )
         end
       end
     )
 
-    UI.rankTiles[i]:GetNamedChild( "_Button" ):SetHandler(
+    UI.rankTiles[ i ]:GetNamedChild( "_Button" ):SetHandler(
       "OnClicked",
       function( control )
-        ITTsRosterBot.selectedRanks[control._activeIndex] = not ITTsRosterBot.selectedRanks[control._activeIndex]
+        ITTsRosterBot.selectedRanks[ control._activeIndex ] = not ITTsRosterBot.selectedRanks[ control._activeIndex ]
 
-        if ITTsRosterBot.selectedRanks[control._activeIndex] then
-          UI.rankTiles[i]:GetNamedChild( "_BG" ):SetCenterColor( ZO_ColorDef:New( "00c0ff" ):UnpackRGBA() )
+        if ITTsRosterBot.selectedRanks[ control._activeIndex ] then
+          UI.rankTiles[ i ]:GetNamedChild( "_BG" ):SetCenterColor( ZO_ColorDef:New( "00c0ff" ):UnpackRGBA() )
         else
-          UI.rankTiles[i]:GetNamedChild( "_BG" ):SetCenterColor( ZO_ColorDef:New( "6d6d6d" ):UnpackRGBA() )
+          UI.rankTiles[ i ]:GetNamedChild( "_BG" ):SetCenterColor( ZO_ColorDef:New( "6d6d6d" ):UnpackRGBA() )
         end
 
         GUILD_ROSTER_MANAGER:RefreshData()
       end
     )
 
-    UI.rankTiles[i]:GetNamedChild( "_Button" ):SetHandler(
+    UI.rankTiles[ i ]:GetNamedChild( "_Button" ):SetHandler(
       "OnMouseExit",
       function( control )
         ClearTooltip( InformationTooltip )
 
-        if not ITTsRosterBot.selectedRanks[control._activeIndex] then
-          UI.rankTiles[i]:GetNamedChild( "_BG" ):SetCenterColor( ZO_ColorDef:New( "383838" ):UnpackRGBA() )
+        if not ITTsRosterBot.selectedRanks[ control._activeIndex ] then
+          UI.rankTiles[ i ]:GetNamedChild( "_BG" ):SetCenterColor( ZO_ColorDef:New( "383838" ):UnpackRGBA() )
         end
       end
     )
@@ -396,7 +396,7 @@ local function createRankSelectTiles()
 
   local statusBarBG = ITTsRosterBot_Controls:GetNamedChild( "RankStatusBackdrop" )
   statusBarBG:ClearAnchors()
-  statusBarBG:SetAnchor( TOPLEFT, UI.rankTiles[6], BOTTOMLEFT, 0, 10 )
+  statusBarBG:SetAnchor( TOPLEFT, UI.rankTiles[ 6 ], BOTTOMLEFT, 0, 10 )
 
   UI.RankStatusBar = ITTsRosterBot_Controls:GetNamedChild( "RankStatusBar" )
   UI.RankStatusBar:SetMinMax( 0, 400 )
@@ -404,14 +404,14 @@ local function createRankSelectTiles()
 
   UI.rankCloseButton = ITTsRosterBot_Controls:GetNamedChild( "Close" )
   UI.rankCloseButton:ClearAnchors()
-  UI.rankCloseButton:SetAnchor( BOTTOMRIGHT, UI.rankTiles[5], TOPRIGHT, 0, -10 )
+  UI.rankCloseButton:SetAnchor( BOTTOMRIGHT, UI.rankTiles[ 5 ], TOPRIGHT, 0, -10 )
 
   UI.rankCloseButton:SetHandler(
     "OnClicked",
     function( control )
       for i = 1, 10 do
-        ITTsRosterBot.selectedRanks[i] = false
-        UI.rankTiles[i]:GetNamedChild( "_BG" ):SetCenterColor( ZO_ColorDef:New( "383838" ):UnpackRGBA() )
+        ITTsRosterBot.selectedRanks[ i ] = false
+        UI.rankTiles[ i ]:GetNamedChild( "_BG" ):SetCenterColor( ZO_ColorDef:New( "383838" ):UnpackRGBA() )
       end
 
       GUILD_ROSTER_MANAGER:RefreshData()
@@ -419,56 +419,56 @@ local function createRankSelectTiles()
   )
 
   UI.donationsTotal =
-  createSidebarTotal(
-    {
-      name = "ITTsRosterBot_DonationsTotal",
-      color = "ebc22f",
-      title = "DONATIONS",
-      value = 1043812,
-      perc = 58,
-      small = true
-    }
-  )
+      createSidebarTotal(
+        {
+          name = "ITTsRosterBot_DonationsTotal",
+          color = "ebc22f",
+          title = "DONATIONS",
+          value = 1043812,
+          perc = 58,
+          small = true
+        }
+      )
 
   UI.donationsTotal:SetAnchor( BOTTOMRIGHT, ITTsRosterBot_ControlsArea, BOTTOMRIGHT, 0, 25 )
 
   UI.taxesTotal =
-  createSidebarTotal(
-    {
-      name = "ITTsRosterBot_TaxesTotal",
-      color = "eb2f96",
-      title = "TAXES",
-      value = 43119,
-      perc = 28,
-      small = true
-    }
-  )
+      createSidebarTotal(
+        {
+          name = "ITTsRosterBot_TaxesTotal",
+          color = "eb2f96",
+          title = "TAXES",
+          value = 43119,
+          perc = 28,
+          small = true
+        }
+      )
 
   UI.taxesTotal:SetAnchor( TOPRIGHT, UI.donationsTotal, TOPLEFT, -5, 0 )
 
   UI.incomeTotal =
-  createSidebarTotal(
-    {
-      name = "ITTsRosterBot_IncomeTotal",
-      color = "eb802f",
-      title = "INCOME",
-      value = 43119,
-      perc = 28
-    }
-  )
+      createSidebarTotal(
+        {
+          name = "ITTsRosterBot_IncomeTotal",
+          color = "eb802f",
+          title = "INCOME",
+          value = 43119,
+          perc = 28
+        }
+      )
 
   UI.incomeTotal:SetAnchor( BOTTOMRIGHT, UI.donationsTotal, TOPRIGHT, 0, -50 )
 
   UI.salesTotal =
-  createSidebarTotal(
-    {
-      name = "ITTsRosterBot_SalesTotal",
-      color = "2feba0",
-      title = "SALES",
-      value = 1443119,
-      perc = 78
-    }
-  )
+      createSidebarTotal(
+        {
+          name = "ITTsRosterBot_SalesTotal",
+          color = "2feba0",
+          title = "SALES",
+          value = 1443119,
+          perc = 78
+        }
+      )
 
   UI.salesTotal:SetAnchor( BOTTOMLEFT, UI.incomeTotal, TOPLEFT, 0, -40 )
 
@@ -488,22 +488,22 @@ function UI.renderRankTiles()
   -- ITTsRosterBot.SalesAdapter:RefreshAllGuildTotals()
 
   for i = 1, GetNumGuildRanks( guildId ) do
-    ITTsRosterBot.guildRanks[i] = { name = GetFinalGuildRankName( guildId, i ), index = i }
+    ITTsRosterBot.guildRanks[ i ] = { name = GetFinalGuildRankName( guildId, i ), index = i }
     guildRanksTotal = guildRanksTotal + 1
   end
 
   for i = 1, 10 do
-    UI.rankTiles[i]:SetHidden( true )
-    ITTsRosterBot.selectedRanks[i] = false
-    UI.rankTiles[i]:GetNamedChild( "_BG" ):SetCenterColor( ZO_ColorDef:New( "383838" ):UnpackRGBA() )
+    UI.rankTiles[ i ]:SetHidden( true )
+    ITTsRosterBot.selectedRanks[ i ] = false
+    UI.rankTiles[ i ]:GetNamedChild( "_BG" ):SetCenterColor( ZO_ColorDef:New( "383838" ):UnpackRGBA() )
   end
 
   UI.rankCloseButton:SetHidden( true )
 
   for i = 1, guildRanksTotal do
-    local iconIndex = GetGuildRankIconIndex( guildId, ITTsRosterBot.guildRanks[i].index )
-    UI.rankTiles[i]:GetNamedChild( "_Icon" ):SetTexture( GetGuildRankSmallIcon( iconIndex ) )
-    UI.rankTiles[i]:SetHidden( false )
+    local iconIndex = GetGuildRankIconIndex( guildId, ITTsRosterBot.guildRanks[ i ].index )
+    UI.rankTiles[ i ]:GetNamedChild( "_Icon" ):SetTexture( GetGuildRankSmallIcon( iconIndex ) )
+    UI.rankTiles[ i ]:SetHidden( false )
   end
 
   local anchorIndex = 6
@@ -512,8 +512,8 @@ function UI.renderRankTiles()
     anchorIndex = 1
   end
 
-  ITTsRosterBot_Controls:GetNamedChild( "RankStatusBackdrop" ):SetAnchor( TOPLEFT, UI.rankTiles[anchorIndex], BOTTOMLEFT, 0,
-    10 )
+  ITTsRosterBot_Controls:GetNamedChild( "RankStatusBackdrop" ):SetAnchor( TOPLEFT, UI.rankTiles[ anchorIndex ], BOTTOMLEFT, 0,
+                                                                          10 )
 
   UI.salesTotalMaxValue = 0
   UI.incomeTotalMaxValue = 0
@@ -591,8 +591,7 @@ local function renderDropdown( timeRangeOptions )
     if ITTsRosterBot.SalesAdapter:IsColumnCheckingEnabled() then
       ITTsRosterBot.SalesAdapter:SelectColumnTimeRange( UI.selectedRankIndex )
     else
-      -- d('Selected timeIndex '..tostring(UI.selectedRankIndex))
-      local start, finish = ITTsDonationBot.reportQueries[UI.selectedRankIndex].range()
+      local start, finish = ITTsDonationBot.reportQueries[ UI.selectedRankIndex ].range()
       ITTsRosterBot.SalesAdapter:RefreshAllGuildTotals( start, finish )
     end
 
@@ -601,7 +600,7 @@ local function renderDropdown( timeRangeOptions )
           #ITTsRosterBot.SalesAdapter:Selected().DonationMapOptions > 0
       then
         ITTsDonationBot.Roster.queryReportMode:SelectItemByIndex( ITTsRosterBot.SalesAdapter:Selected().DonationMapOptions[
-          UI.selectedRankIndex] )
+        UI.selectedRankIndex ] )
       else
         ITTsDonationBot.Roster.queryReportMode:SelectItemByIndex( UI.selectedRankIndex )
       end
@@ -616,7 +615,7 @@ local function renderDropdown( timeRangeOptions )
     UI.timeRangeDropdown:AddItem(
       {
         index = i,
-        name = timeRangeOptions[i],
+        name = timeRangeOptions[ i ],
         callback = callback
       }
     )
@@ -651,14 +650,14 @@ local function toggleServicesUI( display, service )
       ITTsRosterBot.SalesAdapter:DisplayUI( true )
     end
 
-    if PP_TopLevelWindow_Backdrop_1 then
+    if ZO_GuildRoster_PP_BG then
       zo_callLater(
         function()
           if SCENE_MANAGER.currentScene.name == "guildRoster" then
-            PP_TopLevelWindow_Backdrop_1:ClearAnchors()
-            PP_TopLevelWindow_Backdrop_1:SetAnchor( TOPLEFT, ZO_GuildRoster, TOPLEFT, -10, -10 )
-            PP_TopLevelWindow_Backdrop_1:SetAnchor( BOTTOMRIGHT, ZO_GuildRoster, BOTTOMRIGHT, 0, 10 )
-            PP_TopLevelWindow_Backdrop_1:SetWidth( ZO_SharedRightBackgroundLeft:GetWidth() - 240 )
+            ZO_GuildRoster_PP_BG:ClearAnchors()
+            ZO_GuildRoster_PP_BG:SetAnchor( TOPLEFT, ZO_GuildRoster, TOPLEFT, -10, -10 )
+            ZO_GuildRoster_PP_BG:SetAnchor( BOTTOMRIGHT, ZO_GuildRoster, BOTTOMRIGHT, 0, 10 )
+            ZO_GuildRoster_PP_BG:SetWidth( ZO_SharedRightBackgroundLeft:GetWidth() - 240 )
           end
         end,
         0
@@ -671,11 +670,11 @@ local function toggleServicesUI( display, service )
     zo_callLater(
       function()
         if SCENE_MANAGER.currentScene.name == "guildRoster" then
-          if PP_TopLevelWindow_Backdrop_1 then
-            PP_TopLevelWindow_Backdrop_1:ClearAnchors()
-            PP_TopLevelWindow_Backdrop_1:SetAnchor( TOPRIGHT, ZO_GuildRoster, TOPRIGHT, -10, -10 )
-            PP_TopLevelWindow_Backdrop_1:SetAnchor( BOTTOMRIGHT, ZO_GuildRoster, BOTTOMRIGHT, 0, 10 )
-            PP_TopLevelWindow_Backdrop_1:SetWidth( ZO_SharedRightBackgroundLeft:GetWidth() + 240 )
+          if ZO_GuildRoster_PP_BG then
+            ZO_GuildRoster_PP_BG:ClearAnchors()
+            ZO_GuildRoster_PP_BG:SetAnchor( TOPRIGHT, ZO_GuildRoster, TOPRIGHT, -10, -10 )
+            ZO_GuildRoster_PP_BG:SetAnchor( BOTTOMRIGHT, ZO_GuildRoster, BOTTOMRIGHT, 0, 10 )
+            ZO_GuildRoster_PP_BG:SetWidth( ZO_SharedRightBackgroundLeft:GetWidth() + 240 )
           else
             ZO_SharedRightBackgroundLeft:SetWidth( ZO_SharedRightBackgroundLeft:GetWidth() + 300 )
           end
@@ -693,7 +692,6 @@ local function toggleServicesUI( display, service )
 
   UI:CheckServiceStatus()
 end
-
 function UI:ConfigureDropdown()
   local timeRangeOptions = ITTsRosterBot.SalesAdapter:GetTimeRangeOptions()
 

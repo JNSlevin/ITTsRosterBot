@@ -125,7 +125,6 @@ local function buildSettingsOptions()
 
 
     for k, v in pairs( ITTsRosterBot.SalesAdapter.adapters ) do
-        -- logger:Debug( ITTsRosterBot.SalesAdapter.adapters[ k ].settingsLabel )
         if ITTsRosterBot.SalesAdapter.adapters[ k ]:Available() then
             if ITTsRosterBot.SalesAdapter.adapters[ k ].settingsLabel == "Arkadius' Trade Tools" then
                 ATT = "Arkadius' Trade Tools"
@@ -168,7 +167,8 @@ local function buildSettingsOptions()
                     local choice = "None"
 
                     if ITTsRosterBot.db.settings.services.sales ~= "None" then
-                        choice = ITTsRosterBot.SalesAdapter.adapters[ ITTsRosterBot.db.settings.services.sales ].settingsLabel
+                        choice = ITTsRosterBot.SalesAdapter.adapters[ ITTsRosterBot.db.settings.services.sales ]
+                        .settingsLabel
                     end
 
                     return choice
@@ -182,7 +182,8 @@ local function buildSettingsOptions()
             [ 3 ] = {
                 type = "slider",
                 name = "Colorize Joindate #1",
-                tooltip = "If the time of membership is |cff0000below|r this number it will colorize the duration since the join red.",
+                tooltip =
+                "If the time of membership is |cff0000below|r this number it will colorize the duration since the join red.",
                 getFunc = function()
                     return ITTsRosterBot.db.newcomer
                 end,
@@ -198,7 +199,8 @@ local function buildSettingsOptions()
             [ 4 ] = {
                 type = "slider",
                 name = "Colorize Joindate #2",
-                tooltip = "If the time of membership is |cff0000above|r this number it will colorize the duration since the join green.",
+                tooltip =
+                "If the time of membership is |cff0000above|r this number it will colorize the duration since the join green.",
                 getFunc = function()
                     return ITTsRosterBot.db.oldNumber
                 end,

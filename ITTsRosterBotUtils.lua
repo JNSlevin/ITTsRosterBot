@@ -4,7 +4,6 @@ ITTsRosterBot.Utils = Utils
 Utils.memberCache = {}
 local logger = LibDebugLogger( ITTsRosterBot.name .. " - Utils" )
 logger:SetEnabled( false )
-d( "Should be assigning" )
 local SECONDS_IN_HOUR = 60 * 60
 local SECONDS_IN_DAY = SECONDS_IN_HOUR * 24
 local SECONDS_IN_WEEK = SECONDS_IN_DAY * 7
@@ -96,8 +95,6 @@ function Utils:BuildInlineGuildName( settings )
 end
 
 function Utils:BuildInlineRelatedGuilds( displayName, guildId )
-    -- d(displayName, guildId)
-
     local guilds = self.memberCache[ displayName ]
     -- local gtext  = ""
     local guildList = {}

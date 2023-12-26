@@ -6,7 +6,6 @@ SalesAdapter.guildTotals = {}
 
 function SalesAdapter:Register( context )
 	self.adapters[ context.name ] = context
-	d( context )
 end
 
 function SalesAdapter:Initialize()

@@ -1,11 +1,12 @@
 ## Title: ITTs Roster Bot
-## APIVersion: 101038
+## APIVersion: 101040
 ## Description: Keeps on top of rosters, beep! Part of the ITTs Bot family, handy helpers for Trade Guilds.
-## Version: 1.0.3
-## AddOnVersion: 103
+## Version: 1.0.5
+## AddOnVersion: 105
 ## Author: |c00a313Ghostbane|r & |c268074JN Slevin
 ## SavedVariables: ITTsRosterBotSettings ITTsRosterBotData
 ## DependsOn: LibAddonMenu-2.0 LibChatMessage ITTsDonationBot LibDebugLogger LibTextFilter
+## OptionalDependsOn: PerfectPixel
 
 ITTsRosterBot.lua
 ITTsRosterBot-Settings.lua
