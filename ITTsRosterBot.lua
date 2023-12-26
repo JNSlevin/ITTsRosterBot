@@ -7,7 +7,7 @@ ITTsRosterBot.db = db
 local logger = LibDebugLogger( ITTsRosterBot.name )
 -- local LH = LibHistoire
 
-logger:SetEnabled( true )
+logger:SetEnabled( false )
 
 local chat = LibChatMessage( "ITTsRosterBot", "ITTs-RB" )
 
@@ -74,7 +74,8 @@ local function GetApplicationAppendage( guildId, displayName )
     local divider = "" -- "|t500:5:/esoui/art/charactercreate/windowdivider.dds|t
     for i = 1, #memberInfo do
         local timeframe = ITTsRosterBot.db.settings.applications.sales
-        donations = ITTsDonationBot:QueryValues( memberInfo[ i ].guildId, displayName, GetTimeStamp() - (timeframe * SECONDS_IN_DAY),
+        donations = ITTsDonationBot:QueryValues( memberInfo[ i ].guildId, displayName,
+                                                 GetTimeStamp() - (timeframe * SECONDS_IN_DAY),
                                                  GetTimeStamp() )
         if ITTsRosterBot.SalesAdapter:Selected() ~= nil then
             sales = ITTsRosterBot.SalesAdapter:GetSaleInformation( memberInfo[ i ].guildId, displayName,
@@ -266,7 +267,8 @@ function ITTsRosterBot:Initialize()
             ITTsRosterBotData[ worldName ].guilds[ GUILD_ROSTER_MANAGER.guildId ].join_records[ data.displayName ] and
             ITTsRosterBotData[ worldName ].guilds[ GUILD_ROSTER_MANAGER.guildId ].join_records[ data.displayName ].import
         then
-            local import = ITTsRosterBotData[ worldName ].guilds[ GUILD_ROSTER_MANAGER.guildId ].join_records[ data.displayName ].import
+            local import = ITTsRosterBotData[ worldName ].guilds[ GUILD_ROSTER_MANAGER.guildId ].join_records
+            [ data.displayName ].import
             local formatedTime = os.date( "*t", import )
             local hour = formatedTime.hour
             local min = formatedTime.min
@@ -499,7 +501,8 @@ end
 function ITTsRosterBot:SaveEvent( guildId, eventIndex )
     local timeStamp = GetTimeStamp()
     local eventType, secsSinceEvent, displayName, amount, arg1, _, _, _, id = GetGuildEventInfo( guildId,
-                                                                                                 GUILD_HISTORY_GENERAL, eventIndex )
+                                                                                                 GUILD_HISTORY_GENERAL,
+                                                                                                 eventIndex )
 
     -- logger:Info(eventIndex, eventType)
 
