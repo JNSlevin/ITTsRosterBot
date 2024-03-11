@@ -3,10 +3,12 @@ ITTsRosterBot.Utils = Utils
 
 Utils.memberCache = {}
 local logger = LibDebugLogger( ITTsRosterBot.name .. " - Utils" )
-logger:SetEnabled( false )
+logger:SetEnabled( true )
 local SECONDS_IN_HOUR = 60 * 60
 local SECONDS_IN_DAY = SECONDS_IN_HOUR * 24
 local SECONDS_IN_WEEK = SECONDS_IN_DAY * 7
+local worldName = GetWorldName()
+
 function Utils:CacheMembers()
     for i = 1, GetNumGuilds() do
         local guildId = GetGuildId( i )
@@ -154,4 +156,25 @@ function Utils:GetRelatedGuildInfo( displayName )
     end
 
     return memberInfo
+end
+
+function Utils:GetJoinDate( guildId, displayName )
+    if not ITTsRosterBotData[ worldName ] then
+        logger:Warn( "No data for world: " .. worldName )
+        return nil
+    end
+    if not ITTsRosterBotData[ worldName ].guilds[ guildId ] then
+        logger:Warn( "No data for guild: " .. guildId )
+        return nil
+    end
+    local data = ITTsRosterBotData[ worldName ].guilds[ guildId ].join_records
+    if not data then
+        logger:Warn( "No join records for guild: " .. guildId )
+        return nil
+    end
+    if not data[ displayName ] then
+        logger:Warn( "No join records for member: " .. displayName )
+        return nil
+    end
+    return data[ displayName ].last
 end

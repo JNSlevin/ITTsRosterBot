@@ -3,11 +3,11 @@ ITTsRosterBot.name = "ITTsRosterBot"
 
 local db = {}
 ITTsRosterBot.db = db
-
+local LH = LibHistoire
 local logger = LibDebugLogger( ITTsRosterBot.name )
--- local LH = LibHistoire
+ITTsRosterBotListener = {}
 
-logger:SetEnabled( false )
+logger:SetEnabled( true )
 
 local chat = LibChatMessage( "ITTsRosterBot", "ITTs-RB" )
 
@@ -75,12 +75,12 @@ local function GetApplicationAppendage( guildId, displayName )
     for i = 1, #memberInfo do
         local timeframe = ITTsRosterBot.db.settings.applications.sales
         donations = ITTsDonationBot:QueryValues( memberInfo[ i ].guildId, displayName,
-                                                 GetTimeStamp() - (timeframe * SECONDS_IN_DAY),
-                                                 GetTimeStamp() )
+            GetTimeStamp() - (timeframe * SECONDS_IN_DAY),
+            GetTimeStamp() )
         if ITTsRosterBot.SalesAdapter:Selected() ~= nil then
             sales = ITTsRosterBot.SalesAdapter:GetSaleInformation( memberInfo[ i ].guildId, displayName,
-                                                                   GetTimeStamp() - (timeframe * SECONDS_IN_DAY),
-                                                                   GetTimeStamp() ).sales
+                GetTimeStamp() - (timeframe * SECONDS_IN_DAY),
+                GetTimeStamp() ).sales
         end
         if ITTsRosterBot.db.settings.applications.guildName == true then
             guildName = GetGuildName( memberInfo[ i ].guildId )
@@ -138,7 +138,7 @@ end
 
 local function OnHistoryResponseReceived( ev, guildId, category )
     if category == GUILD_HISTORY_GENERAL and ITTsRosterBot:IsGuildEnabled( guildId ) then
-        ITTsRosterBot:RunScanCycle( guildId )
+        -- ITTsRosterBot:RunScanCycle( guildId )
     end
 
     -- logger:Info('---------------------------------')
@@ -188,8 +188,8 @@ function ITTsRosterBot:Initialize()
     self.Settings:Initialize()
 
     self:CheckGuildPermissions()
-    self:RequestAllHistory()
-
+    --self:RequestAllHistory()
+    ITTsRosterBot.SetupListeners()
     self.Utils:CacheMembers()
     self.UI:Setup()
 
@@ -268,7 +268,7 @@ function ITTsRosterBot:Initialize()
             ITTsRosterBotData[ worldName ].guilds[ GUILD_ROSTER_MANAGER.guildId ].join_records[ data.displayName ].import
         then
             local import = ITTsRosterBotData[ worldName ].guilds[ GUILD_ROSTER_MANAGER.guildId ].join_records
-            [ data.displayName ].import
+                [ data.displayName ].import
             local formatedTime = os.date( "*t", import )
             local hour = formatedTime.hour
             local min = formatedTime.min
@@ -498,40 +498,41 @@ function ITTsRosterBot:CheckGuildPermissions( newGuildId )
     ZO_DeepTableCopy( ITTsRosterBot.db.settings.guilds, ITTsRosterBot.db.settings.guildsCache )
 end
 
-function ITTsRosterBot:SaveEvent( guildId, eventIndex )
+function ITTsRosterBot:SaveEvent( guildId, eventType, eventTimeStamp, displayName )
     local timeStamp = GetTimeStamp()
-    local eventType, secsSinceEvent, displayName, amount, arg1, _, _, _, id = GetGuildEventInfo( guildId,
-                                                                                                 GUILD_HISTORY_GENERAL,
-                                                                                                 eventIndex )
-
-    -- logger:Info(eventIndex, eventType)
-
+    local secsSinceEvent = timeStamp - eventTimeStamp
     if eventType == GUILD_EVENT_GUILD_JOIN and secsSinceEvent >= 0 then
-        local eventTimestamp = timeStamp - secsSinceEvent
-        if eventTimestamp < 0 then
-            eventTimestamp = timeStamp
+        if eventTimeStamp < 0 then
+            eventTimeStamp = timeStamp
         end
-
-        local eventId = GetGuildEventId( guildId, category, eventIndex )
-
-        logger:Info( "ITTsRosterBot:SaveEvent()", "#" .. tostring( eventIndex ), displayName, eventTimestamp, id )
 
         if not ITTsRosterBotData[ worldName ].guilds[ guildId ].join_records[ displayName ] then
             ITTsRosterBotData[ worldName ].guilds[ guildId ].join_records[ displayName ] = {}
-            ITTsRosterBotData[ worldName ].guilds[ guildId ].join_records[ displayName ].last = eventTimestamp
+            ITTsRosterBotData[ worldName ].guilds[ guildId ].join_records[ displayName ].last = eventTimeStamp
         end
-
+        if not ITTsRosterBotData[ worldName ].lastEventTimeStamp then
+            ITTsRosterBotData[ worldName ].lastEventTimeStamp = eventTimeStamp
+        end
+        if not ITTsRosterBotData[ worldName ].lastEvent then
+            ITTsRosterBotData[ worldName ].lastEvent = eventTimeStamp
+        end
+        if ITTsRosterBotData[ worldName ].lastEvent < eventTimeStamp then
+            ITTsRosterBotData[ worldName ].lastEvent = eventTimeStamp
+        end
+        if ITTsRosterBotData[ worldName ].lastEventTimeStamp < eventTimeStamp then
+            ITTsRosterBotData[ worldName ].lastEventTimeStamp = eventTimeStamp
+        end
         if ITTsRosterBotData[ worldName ].guilds[ guildId ].join_records[ displayName ].last ~= nil then
-            if eventTimestamp < ITTsRosterBotData[ worldName ].guilds[ guildId ].join_records[ displayName ].last - 86400 then
-                ITTsRosterBotData[ worldName ].guilds[ guildId ].join_records[ displayName ].first = eventTimestamp
+            if eventTimeStamp < ITTsRosterBotData[ worldName ].guilds[ guildId ].join_records[ displayName ].last - 86400 then
+                ITTsRosterBotData[ worldName ].guilds[ guildId ].join_records[ displayName ].first = eventTimeStamp
             else
-                ITTsRosterBotData[ worldName ].guilds[ guildId ].join_records[ displayName ].last = eventTimestamp
+                ITTsRosterBotData[ worldName ].guilds[ guildId ].join_records[ displayName ].last = eventTimeStamp
             end
         end
     end
 end
 
-function ITTsRosterBot:RunScanCycle( guildId, forceIndex )
+--[[ function ITTsRosterBot:RunScanCycle( guildId, forceIndex )
     self.scanHistory = self.scanHistory or {}
     local start = self.scanHistory[ guildId ] or 1
     local numGuildEvents = GetNumGuildEvents( guildId, GUILD_HISTORY_GENERAL_ROSTER )
@@ -548,7 +549,7 @@ function ITTsRosterBot:RunScanCycle( guildId, forceIndex )
     end
 
     self.scanHistory[ guildId ] = numGuildEvents + 1
-end
+end ]]
 
 function ITTsRosterBot:GetGuildMap()
     local guilds = {}
@@ -596,7 +597,7 @@ function ITTsRosterBot:IsGuildEnabled( guildId )
     return condition
 end
 
-function ITTsRosterBot:RequestAllHistory()
+--[[ function ITTsRosterBot:RequestAllHistory()
     for _, guildId in pairs( self:GetGuildMap() ) do
         self:RequestHistory( guildId, GUILD_HISTORY_GENERAL )
     end
@@ -652,6 +653,74 @@ function ITTsRosterBot:RequestHistory( gID, guildHistoryCategory )
             cooldown
         )
     end
+end ]]
+
+function ITTsRosterBot:QueueListener( guildId )
+    ITTsRosterBotListener[ guildId ] = LH:CreateGuildHistoryListener( guildId, GUILD_HISTORY_GENERAL )
+    if not ITTsRosterBotListener[ guildId ] then
+        logger:Error( "Failed to create listener for guildId:", guildId )
+        zo_callLater( function() ITTsRosterBot:QueueListener( guildId ) end, 1000 )
+    else
+        logger:Debug( "Listener created for guildId:", guildId )
+        ITTsRosterBot:CreateListener( guildId )
+    end
+end
+
+function ITTsRosterBot:CreateListener( guildId )
+    local lastEvent = 1413120020
+    if ITTsRosterBotData then
+        if ITTsRosterBotData[ worldName ].lastEvent then
+            lastEvent = ITTsRosterBotData[ worldName ].lastEvent
+        end
+    end
+    logger:Debug( "LastEvent:", lastEvent )
+
+    local setAfterTimeStamp = lastEvent - ZO_ONE_DAY_IN_SECONDS * 2
+    ITTsRosterBotListener[ guildId ]:SetAfterEventTime( 0 )
+    logger:Debug( "AfterTimeStamp:", setAfterTimeStamp )
+    ITTsRosterBotListener[ guildId ]:SetNextEventCallback( function(
+        eventType, eventId, timestampS, actingDisplayName, targetDisplayName, rankId
+
+    )
+        if eventType == GUILD_EVENT_GUILD_JOIN then
+            self:SaveEvent( guildId, eventType, timestampS, actingDisplayName )
+        end
+    end )
+
+    ITTsRosterBotListener[ guildId ]:Start()
+end
+
+function ITTsRosterBot.SetupListeners()
+    local guilds = ITTsRosterBot:GetGuildMap()
+    logger:Debug( "Guilds:", #guilds )
+    for i = 1, #guilds do
+        if not ITTsRosterBotListener[ guilds[ i ] ] then
+            ITTsRosterBotListener[ guilds[ i ] ] = {}
+        end
+        ITTsRosterBot:QueueListener( guilds[ i ] )
+        logger:Debug( "Listener queued for guildId:", guilds[ i ] )
+    end
+end
+
+function ITTsRosterBot:SetupFullScan()
+    local guilds = self:GetGuildMap()
+    for i = 1, #guilds do
+        local guildId = guilds[ i ]
+        self:ScanEntireLH( guildId )
+    end
+end
+
+function ITTsRosterBot:ScanEntireLH( guildId )
+    ITTsRosterBotListener[ guildId ]:Stop()
+
+    ITTsRosterBotListener[ guildId ]:SetAfterEventTime( 1413120020 )
+    ITTsRosterBotListener[ guildId ]:SetEventCallback(
+        function( eventType, eventId, timestampS, actingDisplayName, targetDisplayName, rankId )
+            self:SaveEvent( guildId, eventType, timestampS, actingDisplayName, targetDisplayName, rankId )
+        end
+    )
+
+    ITTsRosterBotListener[ guildId ]:Start()
 end
 
 function ITTsRosterBot:GetTimestampOfDayStart( offset )

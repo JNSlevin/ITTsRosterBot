@@ -179,7 +179,7 @@ local function applySalesTemplates( data, columnCheckSaleData )
   else
     local start, finish = ITTsDonationBot.reportQueries[ UI.selectedRankIndex ].range()
     local userInformation = ITTsRosterBot.SalesAdapter:GetSaleInformation( GUILD_ROSTER_MANAGER.guildId, data.displayName,
-                                                                           start, finish )
+      start, finish )
 
     sales = userInformation.sales
     purchases = userInformation.purchases
@@ -332,7 +332,7 @@ local function createRankSelectTiles()
 
   for i = 1, 10 do
     local rankFilter = CreateControlFromVirtual( "ITTsRosterBot_ControlsAreaRankFilter" .. i, ITTsRosterBot_Controls,
-                                                 "ITTsRosterBot_RankFilter" )
+      "ITTsRosterBot_RankFilter" )
     rankFilter:GetNamedChild( "_BG" ):SetEdgeColor( ZO_ColorDef:New( 0, 0, 0, 0 ):UnpackRGBA() )
     -- rankFilter:GetNamedChild('_Icon'):SetTexture(GetGuildRankSmallIcon(iconIndex))
     rankFilter:SetHidden( true )
@@ -358,7 +358,7 @@ local function createRankSelectTiles()
         InformationTooltip:SetOwner( control, BOTTOM, 0, 0 )
         if ITTsRosterBot.guildRanks[ control._activeIndex ] then
           InformationTooltip:AddLine( ITTsRosterBot.guildRanks[ control._activeIndex ].name, "",
-                                      ZO_TOOLTIP_DEFAULT_COLOR:UnpackRGB() )
+            ZO_TOOLTIP_DEFAULT_COLOR:UnpackRGB() )
         end
 
         if not ITTsRosterBot.selectedRanks[ control._activeIndex ] then
@@ -513,7 +513,7 @@ function UI.renderRankTiles()
   end
 
   ITTsRosterBot_Controls:GetNamedChild( "RankStatusBackdrop" ):SetAnchor( TOPLEFT, UI.rankTiles[ anchorIndex ], BOTTOMLEFT, 0,
-                                                                          10 )
+    10 )
 
   UI.salesTotalMaxValue = 0
   UI.incomeTotalMaxValue = 0
@@ -717,7 +717,6 @@ end
 function UI:Setup()
   -- renderHistorySearch()
   ITTsRosterBot.Mail:Setup()
-  ITTsRosterBot.History:Setup()
 
   createRankSelectTiles()
 
